@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Icon from '../components/Icon';
 import { useParams, Link } from 'react-router-dom';
 import { PROPERTIES } from '../constants';
 import { User } from '../types';
@@ -56,7 +57,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
               onClick={() => toggleFavorite(property.id)}
               className={`absolute top-8 right-8 w-14 h-14 rounded-none flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
             >
-              <i className={`fa-heart ${isFavorite ? 'fas' : 'far'} text-xl`}></i>
+              <Icon name="heart" variant={isFavorite ? 'solid' : 'regular'} className="text-xl" />
             </button>
           </div>
           <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto pr-2 h-[500px]">
@@ -72,7 +73,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
           <div className="mb-10">
             <h1 className="text-5xl font-bold serif mb-4">{property.title}</h1>
             <p className="text-slate-500 font-bold uppercase tracking-widest text-xs flex items-center mb-6">
-              <i className="fas fa-map-marker-alt mr-2 text-black"></i> {property.location}
+              <Icon name="map-marker-alt" className="mr-2 text-black" /> {property.location}
             </p>
             <div className="bg-slate-50 p-8 border-l-8 border-black mb-10">
               <span className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-2">Investment Starting From</span>
@@ -119,7 +120,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
                 <div className="flex flex-wrap gap-3">
                   {property.landmarks.map((l, i) => (
                     <span key={i} className="bg-slate-100 px-4 py-2 text-xs font-bold text-slate-600">
-                      <i className="fas fa-location-arrow mr-2 text-black"></i> {l}
+                      <Icon name="location-arrow" className="mr-2 text-black" /> {l}
                     </span>
                   ))}
                 </div>

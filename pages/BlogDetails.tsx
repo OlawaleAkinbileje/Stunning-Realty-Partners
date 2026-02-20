@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Icon from '../components/Icon';
 import { useParams, Link } from 'react-router-dom';
 import { BLOG_POSTS } from '../constants';
 
@@ -25,7 +26,7 @@ const BlogDetail: React.FC = () => {
       <header className="py-20 bg-slate-50 border-b border-slate-100">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <Link to="/blog" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-black mb-10 transition-colors">
-            <i className="fas fa-long-arrow-alt-left"></i> Back to Insights
+            <Icon name="long-arrow-alt-left" className="" /> Back to Insights
           </Link>
           <div className="flex justify-center items-center gap-4 mb-8">
             <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-4 py-1.5">{post.category}</span>
@@ -48,21 +49,21 @@ const BlogDetail: React.FC = () => {
           <p className="text-xl font-medium text-slate-700 leading-relaxed mb-10 italic border-l-4 border-black pl-8">
             {post.excerpt}
           </p>
-          
+
           <div className="text-slate-600 leading-loose text-lg space-y-8 font-normal">
             {post.content.split('\n').map((para, i) => (
               para ? <p key={i}>{para}</p> : <br key={i} />
             ))}
-            
+
             <h2 className="text-3xl font-bold text-slate-900 serif mt-16 mb-8">Strategic Implications for 2025</h2>
             <p>
-              As we navigate the current fiscal year, the data indicates a clear shift toward high-utility, secure residential complexes. For SRP network partners, this represents a significant window for referral commissions and high-profile asset facilitation. 
+              As we navigate the current fiscal year, the data indicates a clear shift toward high-utility, secure residential complexes. For SRP network partners, this represents a significant window for referral commissions and high-profile asset facilitation.
             </p>
-            
+
             <blockquote className="bg-slate-50 p-10 border-t-8 border-black text-slate-900 font-bold italic text-2xl serif leading-relaxed">
               "The Lagos real estate landscape is no longer just about location; it's about integrated lifestyle ecosystems that provide sustainable value."
             </blockquote>
-            
+
             <p>
               By aligning with project development timelines, members can secure off-plan advantages that traditional buyers often miss. At Stunning Realty Partners, we provide the tools to interpret these market shifts and translate them into growth.
             </p>

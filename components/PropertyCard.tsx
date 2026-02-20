@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Icon from './Icon';
 import { Link } from 'react-router-dom';
 import { Property, User } from '../types';
 
@@ -16,9 +17,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
     <div className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
       <div className="relative h-64 overflow-hidden">
         <Link to={`/property/${property.id}`}>
-          <img 
-            src={property.image} 
-            alt={property.title} 
+          <img
+            src={property.image}
+            alt={property.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         </Link>
@@ -32,21 +33,20 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
             </span>
           )}
         </div>
-        <button 
+        <button
           onClick={(e) => {
             e.preventDefault();
             onFavorite?.(property.id);
           }}
-          className={`absolute bottom-4 right-4 backdrop-blur-sm p-2 rounded-full shadow-lg transition-all ${
-            isFavorite 
-              ? 'bg-red-500 text-white border-none' 
+          className={`absolute bottom-4 right-4 backdrop-blur-sm p-2 rounded-full shadow-lg transition-all ${isFavorite
+              ? 'bg-red-500 text-white border-none'
               : 'bg-white/90 text-slate-900 hover:bg-red-500 hover:text-white'
-          }`}
+            }`}
         >
-          <i className={`${isFavorite ? 'fas' : 'far'} fa-heart`}></i>
+          <Icon name="heart" variant={isFavorite ? 'solid' : 'regular'} className="" />
         </button>
       </div>
-      
+
       <div className="p-6 flex-grow flex flex-col">
         <Link to={`/property/${property.id}`} className="flex justify-between items-start mb-2 group-hover:text-blue-600">
           <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{property.title}</h3>
@@ -55,21 +55,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
           </p>
         </Link>
         <p className="text-slate-500 text-sm mb-4 flex items-center">
-          <i className="fas fa-map-marker-alt mr-2"></i>
+          <Icon name="map-marker-alt" className="mr-2" />
           {property.location}
         </p>
-        
+
         <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-slate-600 mt-auto">
           <div className="flex items-center gap-1">
-            <i className="fas fa-bed text-blue-500"></i>
+            <Icon name="bed" className="text-blue-500" />
             <span className="text-sm font-medium">{property.beds} Beds</span>
           </div>
           <div className="flex items-center gap-1">
-            <i className="fas fa-bath text-blue-500"></i>
+            <Icon name="bath" className="text-blue-500" />
             <span className="text-sm font-medium">{property.baths} Baths</span>
           </div>
           <div className="flex items-center gap-1">
-            <i className="fas fa-vector-square text-blue-500"></i>
+            <Icon name="vector-square" className="text-blue-500" />
             <span className="text-sm font-medium">{property.sqft} sqft</span>
           </div>
         </div>

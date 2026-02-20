@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Icon from '../components/Icon';
 import { Navigate, Link } from 'react-router-dom';
 import { User, Property, PropertyAlert } from '../types';
 import { PROPERTIES } from '../constants';
@@ -44,7 +45,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl">
-              <i className="fas fa-user"></i>
+              <Icon name="user" className="text-blue-600 text-3xl" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-slate-900 serif">{currentUser.name}</h1>
@@ -56,19 +57,17 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex gap-8 mb-8 border-b border-slate-200">
-          <button 
+          <button
             onClick={() => setActiveTab('favorites')}
-            className={`pb-4 px-2 font-bold text-sm uppercase tracking-widest transition-all border-b-2 ${
-              activeTab === 'favorites' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-            }`}
+            className={`pb-4 px-2 font-bold text-sm uppercase tracking-widest transition-all border-b-2 ${activeTab === 'favorites' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+              }`}
           >
             Saved Favorites ({favoriteProperties.length})
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('alerts')}
-            className={`pb-4 px-2 font-bold text-sm uppercase tracking-widest transition-all border-b-2 ${
-              activeTab === 'alerts' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'
-            }`}
+            className={`pb-4 px-2 font-bold text-sm uppercase tracking-widest transition-all border-b-2 ${activeTab === 'alerts' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+              }`}
           >
             Email Alerts ({currentUser.alerts.length})
           </button>
@@ -79,14 +78,14 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
             {favoriteProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {favoriteProperties.map(property => (
-                  <PropertyCard 
-                    key={property.id} 
-                    property={property} 
-                    currentUser={currentUser} 
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                    currentUser={currentUser}
                     onFavorite={(id) => {
                       const newFaves = currentUser.favorites.filter(fid => fid !== id);
                       onUpdateUser({ ...currentUser, favorites: newFaves });
-                    }} 
+                    }}
                   />
                 ))}
               </div>
@@ -107,23 +106,23 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
                 <form onSubmit={handleAddAlert} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Preferred Location</label>
-                    <input 
+                    <input
                       required
-                      type="text" 
-                      placeholder="e.g. California" 
+                      type="text"
+                      placeholder="e.g. California"
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
                       value={newAlert.location}
-                      onChange={(e) => setNewAlert({...newAlert, location: e.target.value})}
+                      onChange={(e) => setNewAlert({ ...newAlert, location: e.target.value })}
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Max Price ($)</label>
-                    <input 
+                    <input
                       required
-                      type="number" 
+                      type="number"
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
                       value={newAlert.maxPrice}
-                      onChange={(e) => setNewAlert({...newAlert, maxPrice: Number(e.target.value)})}
+                      onChange={(e) => setNewAlert({ ...newAlert, maxPrice: Number(e.target.value) })}
                     />
                   </div>
                   <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
@@ -140,11 +139,11 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
                       <h4 className="font-bold text-slate-900 text-lg">Property in {alert.location}</h4>
                       <p className="text-slate-500 text-sm">Under ${alert.maxPrice?.toLocaleString()} • Real-time notifications active</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => removeAlert(alert.id)}
                       className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
                     >
-                      <i className="fas fa-trash-alt"></i>
+                      <Icon name="trash-alt" className="text-slate-400" />
                     </button>
                   </div>
                 ))

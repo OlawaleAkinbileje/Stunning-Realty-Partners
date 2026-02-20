@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Icon from '../components/Icon';
 import { TEAM } from '../constants';
 
 const About: React.FC = () => {
@@ -17,7 +18,7 @@ const About: React.FC = () => {
       <section className="bg-black py-32 text-center text-white">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-center mb-6">
-            <i className="fas fa-star text-4xl"></i>
+            <Icon name="star" className="text-4xl" />
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-8 serif">Stunning Realty Partners</h1>
           <p className="text-lg text-slate-400 font-medium tracking-wide leading-relaxed uppercase ">
@@ -48,9 +49,9 @@ const About: React.FC = () => {
               </div>
             </div>
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1570126128898-469f39d8d1f0?auto=format&fit=crop&q=80&w=1200" 
-                alt="Architecture" 
+              <img
+                src="https://images.unsplash.com/photo-1570126128898-469f39d8d1f0?auto=format&fit=crop&q=80&w=1200"
+                alt="Architecture"
                 className="rounded-3xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
               />
               <div className="absolute -bottom-10 -left-10 bg-black p-10 text-white rounded-3xl hidden md:block">
@@ -69,7 +70,7 @@ const About: React.FC = () => {
             <h2 className="text-4xl font-bold mb-4 serif">Who Can Become a Member?</h2>
             <p className="text-slate-400 max-w-2xl mx-auto">We welcome individuals from diverse backgrounds looking to transform their career.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: 'fa-briefcase', title: 'Income Seekers', text: 'Employees seeking extra income streams.' },
@@ -79,7 +80,7 @@ const About: React.FC = () => {
             ].map((item, idx) => (
               <div key={idx} className="bg-slate-800/50 p-10 rounded-3xl border border-slate-700 hover:bg-slate-800 transition-all text-center">
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-black mx-auto mb-6 text-2xl">
-                  <i className={`fas ${item.icon}`}></i>
+                  <Icon name={item.icon.replace('fa-', '')} className="text-2xl" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">{item.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{item.text}</p>
@@ -96,7 +97,7 @@ const About: React.FC = () => {
             <span className="text-slate-400 font-black uppercase tracking-[0.3em] text-xs mb-4 block">Our Experts</span>
             <h2 className="text-4xl font-bold text-slate-900 serif">SRP Leadership Team</h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {TEAM.map((member, idx) => (
               <div key={idx} className="group">

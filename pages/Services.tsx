@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Icon from '../components/Icon';
 
 const Services: React.FC = () => {
   const benefits = [
@@ -46,12 +47,12 @@ const Services: React.FC = () => {
             <h2 className="text-4xl font-bold text-slate-900 serif mb-4">Member Benefits</h2>
             <p className="text-slate-500">Comprehensive support designed for competitive markets.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {benefits.map((benefit, idx) => (
               <div key={idx} className="bg-white p-12 rounded-none border-b-4 border-black shadow-sm hover:shadow-xl transition-all group">
                 <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-black text-2xl mb-8 group-hover:bg-black group-hover:text-white transition-all">
-                  <i className={`fas ${benefit.icon}`}></i>
+                  <Icon name={benefit.icon.replace('fa-', '')} className="text-2xl" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-4">{benefit.title}</h3>
                 <p className="text-slate-500 leading-relaxed text-sm font-medium">{benefit.text}</p>

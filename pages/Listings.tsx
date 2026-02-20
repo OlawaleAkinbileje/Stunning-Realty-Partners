@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Icon from '../components/Icon';
 import { useLocation } from 'react-router-dom';
 import PropertyCard from '../components/PropertyCard';
 import { PROPERTIES } from '../constants';
@@ -59,7 +60,7 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
 
             <div className="flex flex-wrap gap-4">
               <div className="relative">
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
                 <input
                   type="text"
                   placeholder="Search location..."
@@ -90,7 +91,7 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
         <aside className="lg:w-64 flex-shrink-0 space-y-8">
           <div>
             <h3 className="font-bold text-[10px] uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
-              <i className="fas fa-filter text-black"></i>
+              <Icon name="filter" className="text-black" />
               Property Type
             </h3>
             <div className="space-y-2">
@@ -152,7 +153,7 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
           ) : (
             <div className="bg-white rounded-none p-20 text-center border-2 border-dashed border-slate-200">
               <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
-                <i className="fas fa-search text-slate-300 text-3xl"></i>
+                <Icon name="search" className="text-slate-300 text-3xl" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4 serif">No matching assets found</h3>
               <p className="text-slate-500 mb-10">Try expanding your search parameters or location.</p>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Icon from '../components/Icon';
 import { useNavigate, Link } from 'react-router-dom';
 import PropertyCard from '../components/PropertyCard';
 import { PROPERTIES, BLOG_POSTS } from '../constants';
@@ -23,38 +24,38 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="relative h-[95vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000" 
-            alt="Corporate Real Estate" 
+          <img
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"
+            alt="Corporate Real Estate"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-slate-900/60"></div>
         </div>
-        
+
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <div className="mb-8 flex justify-center items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
-            <i className="fas fa-star text-white text-3xl"></i>
+            <Icon name="star" className="text-white text-3xl" />
             <span className="text-white font-black tracking-[0.4em] uppercase text-sm border-y border-white/30 py-2">
               Stunning Realty Partners
             </span>
-            <i className="fas fa-star text-white text-3xl"></i>
+            <Icon name="star" className="text-white text-3xl" />
           </div>
-          
+
           <h1 className="text-5xl md:text-8xl font-bold text-white mb-8 serif leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700">
-            Brokerage <span className="text-slate-300 font-light">&</span> Network <br/>
+            Brokerage <span className="text-slate-300 font-light">&</span> Network <br />
             <span className="italic">Excellence.</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-slate-300 mb-12 max-w-3xl mx-auto font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-900">
             Successfully brokering high-profile properties in prime locations while empowering our global partner network.
           </p>
-          
+
           <div className="glass p-3 rounded-none max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-3 animate-in fade-in slide-in-from-bottom-10 duration-1000 shadow-2xl">
             <div className="flex-1 flex items-center gap-4 px-8 w-full py-4 md:py-0">
-              <i className="fas fa-search text-slate-400"></i>
-              <input 
-                type="text" 
-                placeholder="Enter city or neighborhood..." 
+              <Icon name="search" className="text-slate-400" />
+              <input
+                type="text"
+                placeholder="Enter city or neighborhood..."
                 className="bg-transparent border-none focus:ring-0 text-slate-900 w-full placeholder:text-slate-500 outline-none font-bold text-sm"
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
@@ -62,7 +63,7 @@ const Home: React.FC = () => {
             </div>
             <div className="hidden md:block h-10 w-px bg-slate-300"></div>
             <div className="flex-1 flex items-center gap-4 px-8 w-full py-4 md:py-0">
-              <i className="fas fa-network-wired text-slate-400"></i>
+              <Icon name="network-wired" className="text-slate-400" />
               <select className="bg-transparent border-none focus:ring-0 text-slate-900 w-full appearance-none outline-none font-bold text-sm">
                 <option>Partner Options</option>
                 <option>Browse Premium Only</option>
@@ -70,7 +71,7 @@ const Home: React.FC = () => {
                 <option>Valuation Services</option>
               </select>
             </div>
-            <button 
+            <button
               onClick={handleSearch}
               className="bg-black text-white px-10 py-5 rounded-none font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all w-full md:w-auto"
             >
@@ -90,10 +91,10 @@ const Home: React.FC = () => {
             </div>
             <Link to="/listings" className="group flex items-center gap-3 text-black font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
               View All Listings
-              <i className="fas fa-long-arrow-alt-right text-lg"></i>
+              <Icon name="long-arrow-alt-right" className="text-lg" />
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {featuredProperties.map(property => (
               <PropertyCard key={property.id} property={property} />
@@ -139,7 +140,7 @@ const Home: React.FC = () => {
       <section className="py-32 bg-slate-50 border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-12">
-            <i className="fas fa-users-cog text-black text-4xl mb-6"></i>
+            <Icon name="users-cog" className="text-black text-4xl mb-6" />
             <h2 className="text-4xl md:text-6xl font-bold text-slate-900 serif mb-8">Empower Your Success.</h2>
             <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-loose mb-12">
               Join SRP to expand your business through referrals, joint marketing, and high-quality professional development tools. We equip you for the competitive real estate landscape.

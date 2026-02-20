@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Icon from './Icon';
 import { Link, useLocation } from 'react-router-dom';
 import { User } from '../types';
 
@@ -28,27 +29,26 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogout }) => {
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center gap-2">
-              
+
               <img
-                src="/assets/logo/SRP-black.png"    
+                src="/assets/logo/SRP-black.png"
                 alt="SRP Logo"
                 className="h-8 w-auto"
               />
               <span className="hidden sm:inline-block h-4 w-px bg-slate-300 mx-2"></span>
               <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest leading-none text-slate-500">
-                Stunning Realty<br/>Partners
+                Stunning Realty<br />Partners
               </span>
             </Link>
           </div>
-          
+
           <nav className="hidden lg:flex space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-xs uppercase tracking-widest font-bold transition-colors hover:text-black ${
-                  isActive(link.path) ? 'text-black' : 'text-slate-500'
-                }`}
+                className={`text-xs uppercase tracking-widest font-bold transition-colors hover:text-black ${isActive(link.path) ? 'text-black' : 'text-slate-500'
+                  }`}
               >
                 {link.name}
               </Link>
@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogout }) => {
               <div className="flex items-center space-x-4">
                 <Link to="/profile" className="flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-slate-700 hover:text-black">
                   <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">
-                    <i className="fas fa-user text-[10px]"></i>
+                    <Icon name="user" className="text-[10px]" />
                   </div>
                   <span>{currentUser.name}</span>
                 </Link>
@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogout }) => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-slate-900 p-2"
             >
-              <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
+              <Icon name={isMenuOpen ? 'times' : 'bars'} className="text-xl" />
             </button>
           </div>
         </div>
@@ -98,9 +98,8 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogout }) => {
                 key={link.path}
                 to={link.path}
                 onClick={() => setIsMenuOpen(false)}
-                className={`block px-3 py-3 rounded-md text-sm font-bold uppercase tracking-widest ${
-                  isActive(link.path) ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'
-                }`}
+                className={`block px-3 py-3 rounded-md text-sm font-bold uppercase tracking-widest ${isActive(link.path) ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'
+                  }`}
               >
                 {link.name}
               </Link>

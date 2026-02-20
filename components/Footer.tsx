@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Icon from './Icon';
 
 const Footer: React.FC = () => {
   return (
@@ -9,22 +10,22 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
           <div className="col-span-1 md:col-span-1">
             <Link to="/">
-                <img
+              <img
                 src="/assets/logo/SRP-white.png"
                 alt="SRP Logo"
                 className="h-auto w-auto mb-10"
-                />
+              />
             </Link>
             <p className="text-sm leading-loose mb-10 font-medium">
               Stunning Realty Partners (SRP) is an elite brokerage and network platform. We empower professionals through a robust platform for growth, referrals, and high-profile property facilitation across prime global locations.
             </p>
             <div className="flex space-x-8">
-              <a href="https://www.facebook.com/profile.php?id=61563639226196&__tn__=%2Cd" className="hover:text-white transition-colors text-lg"><i className="fab fa-facebook-f"></i></a>
-              <a href="https://www.instagram.com/stunningrealty?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="hover:text-white transition-colors text-lg"><i className="fab fa-instagram"></i></a>
-              <a href="#" className="hover:text-white transition-colors text-lg"><i className="fab fa-linkedin-in"></i></a>
+              <a href="https://www.facebook.com/profile.php?id=61563639226196&__tn__=%2Cd" className="hover:text-white transition-colors text-lg"><Icon name="facebook-f" className="text-lg" /></a>
+              <a href="https://www.instagram.com/stunningrealty?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="hover:text-white transition-colors text-lg"><Icon name="instagram" className="text-lg" /></a>
+              <a href="#" className="hover:text-white transition-colors text-lg"><Icon name="linkedin-in" className="text-lg" /></a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-white font-black uppercase tracking-[0.4em] text-[10px] mb-10">Network Hub</h3>
             <ul className="space-y-5 text-[10px] font-black uppercase tracking-[0.2em]">
@@ -41,15 +42,15 @@ const Footer: React.FC = () => {
             <h3 className="text-white font-black uppercase tracking-[0.4em] text-[10px] mb-10">Our Reach</h3>
             <ul className="space-y-5 text-[10px] font-black uppercase tracking-[0.2em]">
               <li className="flex items-start">
-                <i className="fas fa-map-marker-alt mt-1 mr-4 text-white"></i>
+                <Icon name="map-marker-alt" className="mt-1 mr-4 text-white" />
                 <span className="leading-relaxed">Suite D249<br />Rd 2, Ikota Complex, VGC, Lagos.</span>
               </li>
               <li className="flex items-center">
-                <i className="fas fa-phone mr-4 text-white"></i>
+                <Icon name="phone" className="mr-4 text-white" />
                 <span>+234 906 777 9081</span>
               </li>
               <li className="flex items-center">
-                <i className="fas fa-envelope mr-4 text-white"></i>
+                <Icon name="envelope" className="mr-4 text-white" />
                 <span>stunningrealty@gmail.com</span>
               </li>
             </ul>
@@ -65,7 +66,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-slate-800 pt-10 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold">
           <p>&copy; 2024 Stunning Realty Partners. All rights reserved.</p>
           <div className="flex space-x-8 mt-6 md:mt-0">
