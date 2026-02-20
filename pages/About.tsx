@@ -20,7 +20,7 @@ const About: React.FC = () => {
             <i className="fas fa-star text-4xl"></i>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-8 serif">Stunning Realty Partners</h1>
-          <p className="text-lg text-slate-400 font-medium tracking-wide leading-relaxed uppercase tracking-[0.2em]">
+          <p className="text-lg text-slate-400 font-medium tracking-wide leading-relaxed uppercase ">
             Brokerage & Network Excellence
           </p>
         </div>
