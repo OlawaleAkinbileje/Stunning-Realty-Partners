@@ -12,6 +12,7 @@ export const PROPERTIES: Property[] = [
     sqft: 1800,
     image: 'assets/Available-properties/Bolton/2.jpeg',
     images: [
+      'assets/Available-properties/Bolton/2.jpeg',
       'assets/Available-properties/Bolton/3.jpeg',
       'assets/Available-properties/Bolton/4.jpeg',
       'assets/Available-properties/Bolton/5.jpeg',
@@ -36,6 +37,7 @@ export const PROPERTIES: Property[] = [
     location: 'Off Lagos-Ibadan Expressway, Mowe',
     image: 'assets/Available-properties/Mowe/1.jpeg',
     images: [
+      'assets/Available-properties/Mowe/1.jpeg',
       'assets/Available-properties/Mowe/2.jpeg',
       'assets/Available-properties/Mowe/3.jpeg'
     ],
@@ -60,6 +62,7 @@ export const PROPERTIES: Property[] = [
     location: 'Hitech Road, beside LBS, Lagos',
     image: 'assets/Available-properties/Ibbys-mall/1.jpeg',
     images: [
+      'assets/Available-properties/Ibbys-mall/1.jpeg',
       'assets/Available-properties/Ibbys-mall/2.jpeg',
       'assets/Available-properties/Ibbys-mall/3.jpeg',
       'assets/Available-properties/Ibbys-mall/4.jpeg',
@@ -82,6 +85,7 @@ export const PROPERTIES: Property[] = [
     baths: 2,
     image: 'assets/Available-properties/Victoria-Island/1.jpeg',
     images: [
+      'assets/Available-properties/Victoria-Island/1.jpeg',
       'assets/Available-properties/Victoria-Island/2.jpeg',
       'assets/Available-properties/Victoria-Island/3.jpeg'
     ],
