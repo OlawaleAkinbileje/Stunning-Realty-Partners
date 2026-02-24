@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
-import Icon from '../components/Icon';
-import { useParams, Link } from 'react-router-dom';
-import { PROPERTIES } from '../constants';
-import { User } from '../types';
+import Icon from '../../components/Icon';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { PROPERTIES } from '../../constants';
+import { User } from '../../types';
+import Image from 'next/image';
 
 interface PropertyDetailsProps {
   toggleFavorite: (id: string) => void;
@@ -11,12 +13,14 @@ interface PropertyDetailsProps {
 }
 
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, currentUser }) => {
-  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { id } = router.query as { id: string };
   const property = PROPERTIES.find(p => p.id === id);
   const [activeImage, setActiveImage] = useState(0);
   const [inquirySent, setInquirySent] = useState(false);
   const [inquiryData, setInquiryData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!property) return <div className="pt-40 text-center">Asset Not Found</div>;
 
@@ -25,25 +29,42 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
   const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
 
-    // Simulate API call to send data to stunningrealty@gmail.com
-    console.log(`Sending property inquiry for ${property.title} to stunningrealty@gmail.com`, inquiryData);
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...inquiryData,
+          propertyTitle: property.title
+        })
+      });
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+      const data = await res.json();
 
-    setIsSubmitting(false);
-    setInquirySent(true);
-    setInquiryData({ name: '', email: '', message: '' });
-    setTimeout(() => setInquirySent(false), 8000);
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to send inquiry');
+      }
+
+      setInquirySent(true);
+      setInquiryData({ name: '', email: '', message: '' });
+      setTimeout(() => setInquirySent(false), 8000);
+    } catch (err: any) {
+      console.error('Inquiry error', err);
+      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="pt-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="flex text-[10px] font-black uppercase tracking-widest text-slate-400">
-          <Link to="/" className="hover:text-black">Home</Link>
+        <nav className="flex   text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <Link href="/" className="hover:text-black">Home</Link>
           <span className="mx-3">/</span>
-          <Link to="/listings" className="hover:text-black">Listings</Link>
+          <Link href="/listings" className="hover:text-black">Listings</Link>
           <span className="mx-3">/</span>
           <span className="text-black">{property.title}</span>
         </nav>
@@ -52,7 +73,12 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 relative h-[500px] overflow-hidden">
-            <img src={property.images[activeImage]} className="w-full h-full object-cover" alt={property.title} />
+            <Image
+              src={`/${property.images[activeImage]}`}
+              alt={property.title}
+              fill
+              className="object-cover"
+            />
             <button
               onClick={() => toggleFavorite(property.id)}
               className={`absolute top-8 right-8 w-14 h-14 rounded-none flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
@@ -62,7 +88,18 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
           </div>
           <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto pr-2 h-[500px]">
             {property.images.map((img, idx) => (
-              <img key={idx} src={img} onClick={() => setActiveImage(idx)} className={`cursor-pointer w-32 lg:w-full h-32 object-cover border-2 ${activeImage === idx ? 'border-black' : 'border-transparent'}`} alt="Thumb" />
+              <div
+                key={idx}
+                className={`relative w-32 lg:w-full h-32 cursor-pointer border-2 ${activeImage === idx ? 'border-black' : 'border-transparent'}`}
+                onClick={() => setActiveImage(idx)}
+              >
+                <Image
+                  src={`/${img}`}
+                  alt="Thumb"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -157,9 +194,19 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
                 value={inquiryData.message}
                 onChange={(e) => setInquiryData({ ...inquiryData, message: e.target.value })}
               ></textarea>
+
+              {errorMessage && (
+                <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-[10px] font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-center gap-3">
+                    <Icon name="times" className="text-red-500" />
+                    <span>{errorMessage}</span>
+                  </div>
+                </div>
+              )}
+
               <button
                 disabled={isSubmitting}
-                className="w-full bg-black text-white font-black py-5 text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
+                className="w-full bg-black text-white font-black py-5 text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Sending Request...' : 'Send Request'}
               </button>

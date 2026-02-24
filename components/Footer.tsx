@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import Icon from './Icon';
+import Image from 'next/image';
 
 const Footer: React.FC = () => {
   return (
@@ -9,10 +10,12 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
           <div className="col-span-1 md:col-span-1">
-            <Link to="/">
-              <img
+            <Link href="/">
+              <Image
                 src="/assets/logo/SRP-white.png"
                 alt="SRP Logo"
+                width={160}
+                height={40}
                 className="h-auto w-auto mb-10"
               />
             </Link>
@@ -29,11 +32,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-white font-black uppercase tracking-[0.4em] text-[10px] mb-10">Network Hub</h3>
             <ul className="space-y-5 text-[10px] font-black uppercase tracking-[0.2em]">
-              <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/listings" className="hover:text-white transition-colors">Premium Portfolio</Link></li>
-              <li><Link to="/services" className="hover:text-white transition-colors">Partner Benefits</Link></li>
-              <li><Link to="/about" className="hover:text-white transition-colors">About the Network</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact Desk</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
+              <li><Link href="/listings" className="hover:text-white transition-colors">Premium Portfolio</Link></li>
+              <li><Link href="/services" className="hover:text-white transition-colors">Partner Benefits</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">About the Network</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Desk</Link></li>
             </ul>
           </div>
 
@@ -60,7 +63,7 @@ const Footer: React.FC = () => {
             <h3 className="text-white font-black uppercase tracking-[0.4em] text-[10px] mb-10">Partner Access</h3>
             <div className="bg-slate-900 p-8 border-l-4 border-white">
               <p className="text-[10px] text-slate-300 font-bold mb-6 leading-loose">Interested in joining the elite brokerage circle?</p>
-              <Link to="/contact" className="text-white font-black uppercase tracking-widest text-[10px] border-b-2 border-white pb-1 hover:text-slate-400 hover:border-slate-400 transition-all">
+              <Link href="/contact" className="text-white font-black uppercase tracking-widest text-[10px] border-b-2 border-white pb-1 hover:text-slate-400 hover:border-slate-400 transition-all">
                 Apply Today
               </Link>
             </div>

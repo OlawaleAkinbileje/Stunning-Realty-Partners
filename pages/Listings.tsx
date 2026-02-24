@@ -1,19 +1,16 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Icon from '../components/Icon';
-import { useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import PropertyCard from '../components/PropertyCard';
 import { PROPERTIES } from '../constants';
-import { User } from '../types';
+import { useAuth } from '../context/AuthContext';
 
-interface ListingsProps {
-  toggleFavorite: (id: string) => void;
-  currentUser: User | null;
-}
-
-const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
-  const location = useLocation();
-  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+const Listings: React.FC = () => {
+  const { currentUser, toggleFavorite } = useAuth();
+  const router = useRouter();
+  const queryParams = useMemo(() => new URLSearchParams(router.asPath.split('?')[1] || ''), [router.asPath]);
 
   const [filterType, setFilterType] = useState(queryParams.get('type') || 'All');
   const [sortOrder, setSortOrder] = useState('Newest');
@@ -96,14 +93,17 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
             </h3>
             <div className="space-y-2">
               {['All', 'House', 'Villa', 'Apartment', 'Condo', 'Land', 'Commercial'].map(type => (
-                <button
+                <Link
                   key={type}
-                  onClick={() => setFilterType(type)}
+                  href={`/listings?${new URLSearchParams({
+                    ...(searchQuery && { search: searchQuery }),
+                    ...(type !== 'All' && { type })
+                  }).toString()}`}
                   className={`block w-full text-left px-4 py-3 rounded-none text-[10px] uppercase tracking-widest font-bold transition-all ${filterType === type ? 'bg-black text-white' : 'text-slate-600 hover:bg-white'
                     }`}
                 >
                   {type}
-                </button>
+                </Link>
               ))}
             </div>
           </div>
@@ -131,9 +131,9 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
           <div className="p-8 bg-black rounded-none text-white shadow-xl">
             <h4 className="font-bold mb-3 uppercase tracking-widest text-xs">Partner Support</h4>
             <p className="text-[10px] text-slate-400 mb-6 leading-loose">Need assistance with a client proposal or valuation?</p>
-            <button className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-colors">
+            <Link href="/contact" className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 transition-colors inline-block text-center">
               Contact Desk
-            </button>
+            </Link>
           </div>
         </aside>
 
@@ -157,12 +157,12 @@ const Listings: React.FC<ListingsProps> = ({ toggleFavorite, currentUser }) => {
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4 serif">No matching assets found</h3>
               <p className="text-slate-500 mb-10">Try expanding your search parameters or location.</p>
-              <button
-                onClick={() => { setFilterType('All'); setPriceRange(1000000000); setSearchQuery(''); }}
-                className="text-black font-black uppercase tracking-widest text-xs border-b-2 border-black pb-1 hover:text-slate-600 hover:border-slate-600 transition-all"
+              <Link
+                href="/listings"
+                className="text-black font-black uppercase tracking-widest text-xs border-b-2 border-black pb-1 hover:text-slate-600 hover:border-slate-600 transition-all inline-block"
               >
                 Clear all filters
-              </button>
+              </Link>
             </div>
           )}
         </div>

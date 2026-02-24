@@ -1,6 +1,8 @@
 
 import React from 'react';
 import Icon from '../components/Icon';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const Services: React.FC = () => {
   const benefits = [
@@ -22,16 +24,22 @@ const Services: React.FC = () => {
               <span className="text-black font-black uppercase tracking-[0.4em] text-xs mb-6 block underline decoration-slate-300 underline-offset-8">SRP Member Perks</span>
               <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 serif leading-tight">Elevate Your Career with SRP</h1>
               <p className="text-lg text-slate-600 leading-loose mb-10">
-                Joining the Stunning Realty Partners network means more than just having a desk. It means having a global platform, a support system, and access to the world's most stunning properties.
+                Joining the Stunning Realty Partners network means more than just having a desk. It means having a global platform, a support system, and access to the world&apos;s most stunning properties.
               </p>
-              <div className="bg-black p-1 rounded-none inline-block shadow-2xl">
-                <button className="bg-black text-white px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all">
+              <Link href="/auth" className="bg-black p-1 rounded-none inline-block shadow-2xl">
+                <span className="bg-black text-white px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all inline-block">
                   Apply for Membership
-                </button>
-              </div>
+                </span>
+              </Link>
             </div>
             <div className="lg:w-1/2 relative">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" className="rounded-3xl shadow-2xl grayscale" alt="Collaborative workspace" />
+              <Image
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
+                alt="Collaborative workspace"
+                width={1200}
+                height={800}
+                className="rounded-3xl shadow-2xl grayscale"
+              />
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-slate-50 rounded-full border border-slate-200 flex items-center justify-center text-center p-4">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Premium Network Access</p>
               </div>
@@ -73,9 +81,9 @@ const Services: React.FC = () => {
               </p>
             </div>
             <div className="flex-shrink-0">
-              <button className="bg-white text-black px-12 py-6 font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-all shadow-lg">
+              <Link href="/contact" className="bg-white text-black px-12 py-6 font-black text-xs uppercase tracking-widest hover:bg-slate-100 transition-all shadow-lg inline-block">
                 Talk to a Mentor
-              </button>
+              </Link>
             </div>
           </div>
         </div>

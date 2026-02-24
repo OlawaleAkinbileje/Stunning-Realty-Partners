@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { BLOG_POSTS } from '../constants';
+import Image from 'next/image';
 
 const Blog: React.FC = () => {
     return (
@@ -17,9 +18,14 @@ const Blog: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                     {BLOG_POSTS.map(post => (
                         <article key={post.id} className="bg-white group overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all">
-                            <Link to={`/blog/${post.id}`}>
-                                <div className="h-64 overflow-hidden">
-                                    <img src={post.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={post.title} />
+                            <Link href={`/blog/${post.id}`}>
+                                <div className="h-64 overflow-hidden relative">
+                                    <Image
+                                        src={post.image}
+                                        alt={post.title}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
                                 </div>
                             </Link>
                             <div className="p-8">
@@ -27,12 +33,12 @@ const Blog: React.FC = () => {
                                     <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1">{post.category}</span>
                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{post.date}</span>
                                 </div>
-                                <Link to={`/blog/${post.id}`}>
+                                <Link href={`/blog/${post.id}`}>
                                     <h3 className="text-xl font-bold text-slate-900 mb-4 serif group-hover:text-blue-600 transition-colors line-clamp-2">{post.title}</h3>
                                 </Link>
                                 <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">{post.excerpt}</p>
                                 <Link
-                                    to={`/blog/${post.id}`}
+                                    href={`/blog/${post.id}`}
                                     className="text-black font-black uppercase tracking-widest text-[10px] border-b-2 border-black pb-1 hover:text-blue-600 hover:border-blue-600 transition-all inline-block"
                                 >
                                     Read Full Article

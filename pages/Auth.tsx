@@ -1,16 +1,14 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { User } from '../types';
+import { useAuth } from '../context/AuthContext';
 
-interface AuthProps {
-  onAuth: (user: User) => void;
-}
-
-const Auth: React.FC<AuthProps> = ({ onAuth }) => {
+const Auth: React.FC = () => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +20,8 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
       favorites: [],
       alerts: []
     };
-    onAuth(mockUser);
-    navigate('/profile');
+    login(mockUser);
+    router.push('/profile');
   };
 
   return (
@@ -43,39 +41,39 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
             {!isLogin && (
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
-                <input 
+                <input
                   required
-                  type="text" 
+                  type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500" 
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="John Doe"
                 />
               </div>
             )}
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
-              <input 
+              <input
                 required
-                type="email" 
+                type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500" 
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="john@example.com"
               />
             </div>
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2">Password</label>
-              <input 
+              <input
                 required
-                type="password" 
+                type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500" 
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
             </div>
-            
+
             <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
               {isLogin ? 'Enter Dashboard' : 'Initiate Membership'}
             </button>
@@ -84,7 +82,7 @@ const Auth: React.FC<AuthProps> = ({ onAuth }) => {
           <div className="mt-8 text-center text-sm">
             <p className="text-slate-500">
               {isLogin ? "Don't have an account?" : "Already have an account?"}
-              <button 
+              <button
                 onClick={() => setIsLogin(!isLogin)}
                 className="ml-2 text-blue-600 font-bold hover:underline"
               >

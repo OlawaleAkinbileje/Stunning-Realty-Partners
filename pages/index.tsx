@@ -1,33 +1,27 @@
 
 import React, { useState } from 'react';
 import Icon from '../components/Icon';
-import { useNavigate, Link } from 'react-router-dom';
+import Link from 'next/link';
 import PropertyCard from '../components/PropertyCard';
 import { PROPERTIES, BLOG_POSTS } from '../constants';
+import Image from 'next/image';
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
   const featuredProperties = PROPERTIES.filter(p => p.featured);
   const [searchCity, setSearchCity] = useState('');
   const [propertyType, setPropertyType] = useState('Property Type');
-
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (searchCity) params.append('search', searchCity);
-    if (propertyType !== 'Property Type') params.append('type', propertyType);
-    navigate(`/listings?${params.toString()}`);
-  };
 
   return (
     <div className="pt-20">
       {/* Hero Section */}
       <section className="relative h-[95vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"
             alt="Corporate Real Estate"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
           <div className="absolute inset-0 bg-slate-900/60"></div>
         </div>
@@ -63,20 +57,30 @@ const Home: React.FC = () => {
             </div>
             <div className="hidden md:block h-10 w-px bg-slate-300"></div>
             <div className="flex-1 flex items-center gap-4 px-8 w-full py-4 md:py-0">
-              <Icon name="network-wired" className="text-slate-400" />
-              <select className="bg-transparent border-none focus:ring-0 text-slate-900 w-full appearance-none outline-none font-bold text-sm">
-                <option>Partner Options</option>
-                <option>Browse Premium Only</option>
-                <option>Join Agent Network</option>
-                <option>Valuation Services</option>
+              <Icon name="filter" className="text-slate-400" />
+              <select
+                className="bg-transparent border-none focus:ring-0 text-slate-900 w-full appearance-none outline-none font-bold text-sm"
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value)}
+              >
+                <option>Property Type</option>
+                <option>House</option>
+                <option>Villa</option>
+                <option>Apartment</option>
+                <option>Condo</option>
+                <option>Land</option>
+                <option>Commercial</option>
               </select>
             </div>
-            <button
-              onClick={handleSearch}
-              className="bg-black text-white px-10 py-5 rounded-none font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all w-full md:w-auto"
+            <Link
+              href={`/listings?${new URLSearchParams({
+                ...(searchCity && { search: searchCity }),
+                ...(propertyType !== 'Property Type' && { type: propertyType })
+              }).toString()}`}
+              className="bg-black text-white px-10 py-5 rounded-none font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all w-full md:w-auto text-center"
             >
               Explore SRP
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -89,7 +93,7 @@ const Home: React.FC = () => {
               <span className="text-black font-black text-xs tracking-[0.3em] uppercase mb-4 block">Premium Assets</span>
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 serif">Exclusive Brokerage Portfolio</h2>
             </div>
-            <Link to="/listings" className="group flex items-center gap-3 text-black font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
+            <Link href="/listings" className="group flex items-center gap-3 text-black font-black text-xs uppercase tracking-widest hover:translate-x-1 transition-all">
               View All Listings
               <Icon name="long-arrow-alt-right" className="text-lg" />
             </Link>
@@ -112,7 +116,7 @@ const Home: React.FC = () => {
               <h2 className="text-4xl font-bold text-slate-900 serif">Latest From Our Network</h2>
             </div>
             <Link
-              to="/blog"
+              href="/blog"
               className="text-black font-black uppercase tracking-widest text-xs border-b-2 border-black pb-1 hover:text-slate-600 hover:border-slate-600 transition-all"
             >
               See All Insights
@@ -120,9 +124,14 @@ const Home: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {BLOG_POSTS.slice(0, 2).map(post => (
-              <Link key={post.id} to={`/blog/${post.id}`} className="group bg-white flex flex-col md:flex-row overflow-hidden shadow-sm hover:shadow-xl transition-all">
-                <div className="md:w-2/5 h-64 md:h-auto overflow-hidden">
-                  <img src={post.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={post.title} />
+              <Link key={post.id} href={`/blog/${post.id}`} className="group bg-white flex flex-col md:flex-row overflow-hidden shadow-sm hover:shadow-xl transition-all">
+                <div className="md:w-2/5 h-64 md:h-auto overflow-hidden relative">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
                 <div className="md:w-3/5 p-8 flex flex-col justify-center">
                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">{post.category}</span>
@@ -146,10 +155,10 @@ const Home: React.FC = () => {
               Join SRP to expand your business through referrals, joint marketing, and high-quality professional development tools. We equip you for the competitive real estate landscape.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
-              <Link to="/auth" className="bg-black text-white px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl">
+              <Link href="/auth" className="bg-black text-white px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl">
                 Become a Member
               </Link>
-              <Link to="/services" className="border-2 border-black text-black px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all">
+              <Link href="/services" className="border-2 border-black text-black px-10 py-5 font-black text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-all">
                 Network Benefits
               </Link>
             </div>

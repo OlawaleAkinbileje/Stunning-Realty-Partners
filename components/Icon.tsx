@@ -8,7 +8,14 @@ type IconProps = {
 
 const Icon: React.FC<IconProps> = ({ name, className = '', variant = 'solid' }) => {
     const cn = className;
-    const common = { width: '1em', height: '1em', viewBox: '0 0 24 24', fill: 'none', xmlns: 'http://www.w3.org/2000/svg', className: cn } as any;
+    const common: React.SVGProps<SVGSVGElement> = {
+        width: '1em',
+        height: '1em',
+        viewBox: '0 0 24 24',
+        fill: 'none',
+        xmlns: 'http://www.w3.org/2000/svg',
+        className: cn,
+    };
 
     switch (name) {
         case 'star':
@@ -236,6 +243,12 @@ const Icon: React.FC<IconProps> = ({ name, className = '', variant = 'solid' }) 
                 <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                     <rect x="3" y="3" width="18" height="18" />
                     <path d="M7 7h10v10H7z" />
+                </svg>
+            );
+        case 'handshake':
+            return (
+                <svg {...common} fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M0 11.23V21h8v-3.5c0-1.38-1.12-2.5-2.5-2.5h-1v-2.77L0 11.23zM24 11.23V21h-8v-3.5c0-1.38 1.12-2.5 2.5-2.5h1v-2.77l4.5-1zM12 2C8.13 2 5 5.13 5 9s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7z" />
                 </svg>
             );
         default:

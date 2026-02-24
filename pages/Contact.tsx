@@ -6,19 +6,40 @@ const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', phone: '', message: '', interest: 'Join SRP Brokerage Network' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
+    let success = false;
 
-    // Simulate API call to send data to stunningrealty@gmail.com
-    console.log("Submitting inquiry to stunningrealty@gmail.com", formState);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState)
+      });
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+      const data = await res.json();
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 5000);
+      if (!res.ok) {
+        throw new Error(data.error || 'Network response was not ok');
+      }
+
+      // success
+      success = true;
+      setIsSubmitted(true);
+      setFormState({ name: '', email: '', phone: '', message: '', interest: 'Join SRP Brokerage Network' });
+    } catch (err: any) {
+      console.error('Submission error', err);
+      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+      if (success) {
+        setTimeout(() => setIsSubmitted(false), 5000);
+      }
+    }
   };
 
   return (
@@ -120,7 +141,11 @@ const Contact: React.FC = () => {
 
                   <div className="relative">
                     <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">Interest Type</label>
-                    <select className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-4 focus:border-black outline-none transition-all appearance-none font-bold">
+                    <select
+                      className="w-full bg-slate-50 border-b-2 border-slate-200 px-0 py-4 focus:border-black outline-none transition-all appearance-none font-bold"
+                      value={formState.interest}
+                      onChange={(e) => setFormState({ ...formState, interest: e.target.value })}
+                    >
                       <option>Join SRP Brokerage Network</option>
                       <option>Premium Property Inquiry</option>
                       <option>Professional Training</option>
@@ -141,11 +166,20 @@ const Contact: React.FC = () => {
                     ></textarea>
                   </div>
 
-                  <button disabled={isSubmitting} className="w-full bg-black text-white font-black py-6 rounded-none hover:bg-slate-800 transition-all shadow-xl uppercase tracking-[0.3em] text-xs">
+                  {errorMessage && (
+                    <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div className="flex items-center gap-3">
+                        <Icon name="times" className="text-red-500" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <button disabled={isSubmitting} className="w-full bg-black text-white font-black py-6 rounded-none hover:bg-slate-800 transition-all shadow-xl uppercase tracking-[0.3em] text-xs disabled:opacity-50 disabled:cursor-not-allowed">
                     {isSubmitting ? 'Sending...' : 'Inquire for Membership'}
                   </button>
                   <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center leading-loose">
-                    By submitting, you consent to SRP's background checks and network compliance protocols.
+                    By submitting, you consent to SRP&apos;s background checks and network compliance protocols.
                   </p>
                 </form>
               )}

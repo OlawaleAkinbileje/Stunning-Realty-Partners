@@ -1,8 +1,9 @@
 
 import React from 'react';
 import Icon from './Icon';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Property, User } from '../types';
+import Image from 'next/image';
 
 interface PropertyCardProps {
   property: Property;
@@ -16,11 +17,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
       <div className="relative h-64 overflow-hidden">
-        <Link to={`/property/${property.id}`}>
-          <img
-            src={property.image}
+        <Link href={`/property/${property.id}`}>
+          <Image
+            src={`/${property.image}`}
             alt={property.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
         </Link>
         <div className="absolute top-4 left-4 flex gap-2">
@@ -39,8 +41,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
             onFavorite?.(property.id);
           }}
           className={`absolute bottom-4 right-4 backdrop-blur-sm p-2 rounded-full shadow-lg transition-all ${isFavorite
-              ? 'bg-red-500 text-white border-none'
-              : 'bg-white/90 text-slate-900 hover:bg-red-500 hover:text-white'
+            ? 'bg-red-500 text-white border-none'
+            : 'bg-white/90 text-slate-900 hover:bg-red-500 hover:text-white'
             }`}
         >
           <Icon name="heart" variant={isFavorite ? 'solid' : 'regular'} className="" />
@@ -48,7 +50,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, curre
       </div>
 
       <div className="p-6 flex-grow flex flex-col">
-        <Link to={`/property/${property.id}`} className="flex justify-between items-start mb-2 group-hover:text-blue-600">
+        <Link href={`/property/${property.id}`} className="flex justify-between items-start mb-2 group-hover:text-blue-600">
           <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{property.title}</h3>
           <p className="text-blue-600 font-bold whitespace-nowrap ml-2">
             ${property.price.toLocaleString()}{property.status === 'For Rent' ? '/mo' : ''}

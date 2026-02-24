@@ -1,23 +1,26 @@
 
 import React, { useState } from 'react';
 import Icon from '../components/Icon';
-import { Navigate, Link } from 'react-router-dom';
-import { User, Property, PropertyAlert } from '../types';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { Property, PropertyAlert } from '../types';
 import { PROPERTIES } from '../constants';
 import PropertyCard from '../components/PropertyCard';
+import { useAuth } from '../context/AuthContext';
 
-interface ProfileProps {
-  currentUser: User | null;
-  onUpdateUser: (user: User) => void;
-}
-
-const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
+const Profile: React.FC = () => {
+  const { currentUser, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'favorites' | 'alerts'>('favorites');
   const [newAlert, setNewAlert] = useState<Partial<PropertyAlert>>({ location: '', maxPrice: 2000000 });
 
-  if (!currentUser) return <Navigate to="/auth" />;
+  const router = useRouter();
 
-  const favoriteProperties = PROPERTIES.filter(p => currentUser.favorites.includes(p.id));
+  if (!currentUser) {
+    if (typeof window !== 'undefined') router.push('/auth');
+    return null;
+  }
+
+  const favoriteProperties: Property[] = PROPERTIES.filter(p => currentUser.favorites.includes(p.id));
 
   const handleAddAlert = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +28,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
       id: Math.random().toString(36).substr(2, 9),
       ...newAlert
     };
-    onUpdateUser({
+    updateUser({
       ...currentUser,
       alerts: [...currentUser.alerts, alert]
     });
@@ -33,7 +36,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
   };
 
   const removeAlert = (id: string) => {
-    onUpdateUser({
+    updateUser({
       ...currentUser,
       alerts: currentUser.alerts.filter(a => a.id !== id)
     });
@@ -84,7 +87,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
                     currentUser={currentUser}
                     onFavorite={(id) => {
                       const newFaves = currentUser.favorites.filter(fid => fid !== id);
-                      onUpdateUser({ ...currentUser, favorites: newFaves });
+                      updateUser({ ...currentUser, favorites: newFaves });
                     }}
                   />
                 ))}
@@ -92,7 +95,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
             ) : (
               <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-slate-300">
                 <h3 className="text-xl font-bold text-slate-900 mb-4">No saved properties yet</h3>
-                <Link to="/listings" className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition-colors inline-block">
+                <Link href="/listings" className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition-colors inline-block">
                   Browse Listings
                 </Link>
               </div>
@@ -149,7 +152,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser }) => {
                 ))
               ) : (
                 <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-slate-300">
-                  <p className="text-slate-500">You haven't set up any email alerts yet.</p>
+                  <p className="text-slate-500">You haven&apos;t set up any email alerts yet.</p>
                 </div>
               )}
             </div>

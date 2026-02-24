@@ -2,6 +2,7 @@
 import React from 'react';
 import Icon from '../components/Icon';
 import { TEAM } from '../constants';
+import Image from 'next/image';
 
 const About: React.FC = () => {
   const objectives = [
@@ -49,9 +50,11 @@ const About: React.FC = () => {
               </div>
             </div>
             <div className="relative">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1570126128898-469f39d8d1f0?auto=format&fit=crop&q=80&w=1200"
                 alt="Architecture"
+                width={1200}
+                height={800}
                 className="rounded-3xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
               />
               <div className="absolute -bottom-10 -left-10 bg-black p-10 text-white rounded-3xl hidden md:block">
@@ -99,10 +102,15 @@ const About: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            {TEAM.map((member, idx) => (
+                {TEAM.map((member, idx) => (
               <div key={idx} className="group">
                 <div className="relative overflow-hidden rounded-3xl aspect-[4/5] mb-8 grayscale hover:grayscale-0 transition-all duration-500 shadow-xl">
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">{member.name}</h3>
                 <p className="text-black font-black text-[10px] uppercase tracking-widest mb-4">{member.role}</p>
