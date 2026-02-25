@@ -43,7 +43,7 @@ const AdminPanel: React.FC = () => {
     }
   }, [currentUser, authLoading, router, fetchData]);
 
-  const handleStatusUpdate = async (userId: string, status: string) => {
+  const handleStatusUpdate = async (userId: string, status: string, userEmail?: string, userName?: string) => {
     const { error } = await supabase
       .from('profiles')
       .update({ status })
@@ -51,6 +51,31 @@ const AdminPanel: React.FC = () => {
 
     if (!error) {
       setMembers(members.map(m => m.id === userId ? { ...m, status: status as User['status'] } : m));
+
+      // If approved, send notification email
+      if (status === 'active' && userEmail) {
+        await fetch('/api/approve-member', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userEmail, userName })
+        });
+      }
+    }
+  };
+
+  const handleRoleToggle = async (userId: string, currentRole: string) => {
+    const newRole = currentRole === 'admin' ? 'member' : 'admin';
+    if (!confirm(`Are you sure you want to make this user a ${newRole}?`)) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ role: newRole })
+      .eq('id', userId);
+
+    if (!error) {
+      setMembers(members.map(m => m.id === userId ? { ...m, role: newRole as User['role'] } : m));
+    } else {
+      alert('Error updating role: ' + error.message);
     }
   };
 
@@ -234,10 +259,10 @@ const AdminPanel: React.FC = () => {
         ) : (
           <div className="bg-white shadow-2xl overflow-hidden border border-slate-200">
             <table className="w-full text-left">
-              <thead className="bg-slate-900 text-white text-[10px] uppercase tracking-widest font-black">
+              <thead className="bg-slate-50 text-[10px] uppercase tracking-widest font-black text-slate-400">
                 <tr>
-                  <th className="px-8 py-6">Member</th>
-                  <th className="px-8 py-6">Email</th>
+                  <th className="px-8 py-6">Member Details</th>
+                  <th className="px-8 py-6">Role</th>
                   <th className="px-8 py-6">Status</th>
                   <th className="px-8 py-6 text-right">Actions</th>
                 </tr>
@@ -245,8 +270,18 @@ const AdminPanel: React.FC = () => {
               <tbody className="divide-y divide-slate-100">
                 {members.map((member) => (
                   <tr key={member.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-8 py-6 font-bold text-slate-900">{member.name}</td>
-                    <td className="px-8 py-6 text-slate-500">{member.email}</td>
+                    <td className="px-8 py-6">
+                      <p className="font-bold text-slate-900">{member.name}</p>
+                      <p className="text-xs text-slate-400">{member.email}</p>
+                    </td>
+                    <td className="px-8 py-6">
+                      <button
+                        onClick={() => handleRoleToggle(member.id, member.role)}
+                        className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-all ${member.role === 'admin' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'}`}
+                      >
+                        {member.role}
+                      </button>
+                    </td>
                     <td className="px-8 py-6">
                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 ${member.status === 'active' ? 'bg-green-50 text-green-600' :
                         member.status === 'pending' ? 'bg-amber-50 text-amber-600' :
@@ -258,7 +293,7 @@ const AdminPanel: React.FC = () => {
                     <td className="px-8 py-6 text-right">
                       {member.status === 'pending' && (
                         <button
-                          onClick={() => handleStatusUpdate(member.id, 'active')}
+                          onClick={() => handleStatusUpdate(member.id, 'active', member.email, member.name)}
                           className="bg-black text-white px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all"
                         >
                           Approve Member
