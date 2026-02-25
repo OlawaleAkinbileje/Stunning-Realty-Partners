@@ -4,20 +4,37 @@ import Icon from '../components/Icon';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import PropertyCard from '../components/PropertyCard';
-import { PROPERTIES } from '../constants';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../services/supabaseClient';
+import { Property } from '../types';
 
 const Listings: React.FC = () => {
   const { currentUser, toggleFavorite } = useAuth();
   const router = useRouter();
   const queryParams = useMemo(() => new URLSearchParams(router.asPath.split('?')[1] || ''), [router.asPath]);
 
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filterType, setFilterType] = useState(queryParams.get('type') || 'All');
   const [sortOrder, setSortOrder] = useState('Newest');
   const [searchQuery, setSearchQuery] = useState(queryParams.get('search') || '');
-
-  // Adjusted default price range to 500M to accommodate premium Lagos properties
   const [priceRange, setPriceRange] = useState(500000000);
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*');
+
+    if (!error && data) {
+      setProperties(data);
+    }
+    setIsLoading(false);
+  };
 
   // Sync state with URL if it changes
   useEffect(() => {
@@ -28,22 +45,25 @@ const Listings: React.FC = () => {
   }, [queryParams]);
 
   const filteredProperties = useMemo(() => {
-    return PROPERTIES.filter(p => {
+    return properties.filter(p => {
       const matchesType = filterType === 'All' || p.type === filterType;
       const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // If sqmPrice exists (like IBBY's Mall), we treat it as fitting unless it's strictly over the range per unit
       const matchesPrice = p.price <= priceRange;
 
       return matchesType && matchesSearch && matchesPrice;
     }).sort((a, b) => {
-      if (sortOrder === 'Newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortOrder === 'Newest') {
+        const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
+        const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
+        return dateB - dateA;
+      }
       if (sortOrder === 'Price: Low to High') return a.price - b.price;
       if (sortOrder === 'Price: High to Low') return b.price - a.price;
       return 0;
     });
-  }, [filterType, sortOrder, searchQuery, priceRange]);
+  }, [properties, filterType, sortOrder, searchQuery, priceRange]);
 
   return (
     <div className="pt-20 bg-slate-50 min-h-screen">
@@ -139,7 +159,13 @@ const Listings: React.FC = () => {
 
         {/* Results Grid */}
         <div className="flex-grow">
-          {filteredProperties.length > 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white h-96 animate-pulse border border-slate-100 shadow-sm rounded-2xl"></div>
+              ))}
+            </div>
+          ) : filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {filteredProperties.map(property => (
                 <PropertyCard

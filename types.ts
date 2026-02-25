@@ -1,4 +1,3 @@
-
 export interface PropertyUnit {
   type: string;
   price: number;
@@ -10,7 +9,6 @@ export interface PaymentPlan {
   price: number;
   deposit?: number;
 }
-
 
 export interface Property {
   id: string;
@@ -27,7 +25,8 @@ export interface Property {
   type: "House" | "Condo" | "Villa" | "Apartment" | "Land" | "Commercial";
   status: "For Sale" | "For Rent" | "Off-Plan" | "Still Selling";
   featured: boolean;
-  createdAt: string;
+  createdAt?: string;
+  created_at?: string;
   titleType?: string; // e.g., C of O, Governor's Consent
   landmarks?: string[];
   amenities?: string[];
@@ -54,6 +53,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role: "member" | "admin";
+  status: "pending" | "active" | "suspended";
   favorites: string[]; // array of property IDs
   alerts: PropertyAlert[];
 }
@@ -67,7 +68,7 @@ export interface PropertyAlert {
 }
 
 export interface Message {
-  role: 'user' | 'model';
+  role: "user" | "model";
   text: string;
 }
 
@@ -76,4 +77,18 @@ export interface TeamMember {
   role: string;
   bio: string;
   image: string;
+}
+
+export interface Inquiry {
+  id: string;
+  user_id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  interest?: string;
+  property_id?: string;
+  property_title?: string;
+  message: string;
+  status: 'new' | 'replied' | 'closed';
+  created_at: string;
 }

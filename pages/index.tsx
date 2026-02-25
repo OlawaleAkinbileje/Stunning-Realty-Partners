@@ -1,15 +1,33 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../components/Icon';
 import Link from 'next/link';
 import PropertyCard from '../components/PropertyCard';
-import { PROPERTIES, BLOG_POSTS } from '../constants';
+import { BLOG_POSTS } from '../constants';
 import Image from 'next/image';
+import { supabase } from '../services/supabaseClient';
+import { Property } from '../types';
 
 const Home: React.FC = () => {
-  const featuredProperties = PROPERTIES.filter(p => p.featured);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const featuredProperties = properties.filter(p => p.featured);
   const [searchCity, setSearchCity] = useState('');
   const [propertyType, setPropertyType] = useState('Property Type');
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .limit(6);
+
+    if (!error && data) {
+      setProperties(data);
+    }
+  };
 
   return (
     <div className="pt-20">

@@ -1,27 +1,83 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { User } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../services/supabaseClient';
+import Icon from '../components/Icon';
 
 const Auth: React.FC = () => {
-  const { login } = useAuth();
+  const { currentUser } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // If already logged in, redirect to profile
+  React.useEffect(() => {
+    if (currentUser) {
+      router.push('/profile');
+    }
+  }, [currentUser, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock authentication
-    const mockUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: formData.name || 'Valued Client',
-      email: formData.email,
-      favorites: [],
-      alerts: []
-    };
-    login(mockUser);
-    router.push('/profile');
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (isLogin) {
+        // Login
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+        if (loginError) throw loginError;
+      } else {
+        // Register
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+        });
+        if (signUpError) throw signUpError;
+
+        if (authData.user) {
+          // Create profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: authData.user.id,
+                name: formData.name,
+                email: formData.email,
+                role: 'member',
+                status: 'pending' // New users start as pending
+              }
+            ]);
+          if (profileError) throw profileError;
+
+          // Notify Admin
+          await fetch('/api/notify-admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'NEW_REGISTRATION',
+              user: {
+                name: formData.name,
+                email: formData.email
+              }
+            })
+          });
+        }
+      }
+      router.push('/profile');
+    } catch (err) {
+      console.error('Auth error:', err);
+      const message = err instanceof Error ? err.message : 'An error occurred during authentication.';
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,6 +93,13 @@ const Auth: React.FC = () => {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm flex items-center gap-3">
+              <Icon name="times" className="text-red-500" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
               <div>
@@ -46,7 +109,7 @@ const Auth: React.FC = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
                   placeholder="John Doe"
                 />
               </div>
@@ -58,7 +121,7 @@ const Auth: React.FC = () => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
                 placeholder="john@example.com"
               />
             </div>
@@ -69,13 +132,16 @@ const Auth: React.FC = () => {
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
                 placeholder="••••••••"
               />
             </div>
 
-            <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
-              {isLogin ? 'Enter Dashboard' : 'Initiate Membership'}
+            <button
+              disabled={isLoading}
+              className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg disabled:opacity-50"
+            >
+              {isLoading ? 'Processing...' : (isLogin ? 'Enter Dashboard' : 'Initiate Membership')}
             </button>
           </form>
 
@@ -84,7 +150,7 @@ const Auth: React.FC = () => {
               {isLogin ? "Don't have an account?" : "Already have an account?"}
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="ml-2 text-blue-600 font-bold hover:underline"
+                className="ml-2 text-black font-bold hover:underline"
               >
                 {isLogin ? 'Register Here' : 'Log in here'}
               </button>

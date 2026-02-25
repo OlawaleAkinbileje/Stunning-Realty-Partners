@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import Icon from '../components/Icon';
+import { useAuth } from '../context/AuthContext';
 
 const Contact: React.FC = () => {
+  const { currentUser } = useAuth();
   const [formState, setFormState] = useState({ name: '', email: '', phone: '', message: '', interest: 'Join SRP Brokerage Network' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -18,7 +20,10 @@ const Contact: React.FC = () => {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formState)
+        body: JSON.stringify({
+          ...formState,
+          userId: currentUser?.id
+        })
       });
 
       const data = await res.json();
@@ -31,9 +36,10 @@ const Contact: React.FC = () => {
       success = true;
       setIsSubmitted(true);
       setFormState({ name: '', email: '', phone: '', message: '', interest: 'Join SRP Brokerage Network' });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Submission error', err);
-      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
+      const message = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
       if (success) {

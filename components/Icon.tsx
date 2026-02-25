@@ -134,6 +134,46 @@ const Icon: React.FC<IconProps> = ({ name, className = '', variant = 'solid' }) 
                     <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM2 22a10 10 0 0120 0H2z" />
                 </svg>
             );
+        case 'edit':
+            return (
+                <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            );
+        case 'clock':
+            return (
+                <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+            );
+        case 'chart-line':
+            return (
+                <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M3 3v18h18" />
+                    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+                </svg>
+            );
+        case 'user-graduate':
+            return (
+                <svg {...common} fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.89 9.59l1.63-.89L12 13l6.48-3.53 1.63.89L12 14.07 3.89 9.59zM12 15l-9-4.91V17c0 1.66 4.03 3 9 3s9-1.34 9-3v-6.91L12 15z" />
+                </svg>
+            );
+        case 'filter':
+            return (
+                <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
+            );
+        case 'dollar-sign':
+            return (
+                <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                </svg>
+            );
         case 'trash-alt':
             return (
                 <svg {...common} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">

@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Icon from '../../components/Icon';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { PROPERTIES } from '../../constants';
-import { User } from '../../types';
+import { User, Property } from '../../types';
 import Image from 'next/image';
+import { supabase } from '../../services/supabaseClient';
 
 interface PropertyDetailsProps {
   toggleFavorite: (id: string) => void;
@@ -15,13 +15,35 @@ interface PropertyDetailsProps {
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, currentUser }) => {
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const property = PROPERTIES.find(p => p.id === id);
+  const [property, setProperty] = useState<Property | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [inquirySent, setInquirySent] = useState(false);
   const [inquiryData, setInquiryData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const fetchProperty = useCallback(async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (!error && data) {
+      setProperty(data);
+    }
+    setIsLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchProperty();
+    }
+  }, [id, fetchProperty]);
+
+  if (isLoading) return <div className="pt-40 text-center">Loading Asset...</div>;
   if (!property) return <div className="pt-40 text-center">Asset Not Found</div>;
 
   const isFavorite = currentUser?.favorites.includes(property.id);
@@ -37,7 +59,9 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...inquiryData,
-          propertyTitle: property.title
+          propertyTitle: property.title,
+          propertyId: property.id,
+          userId: currentUser?.id
         })
       });
 
@@ -50,9 +74,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
       setInquirySent(true);
       setInquiryData({ name: '', email: '', message: '' });
       setTimeout(() => setInquirySent(false), 8000);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Inquiry error', err);
-      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
+      const message = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
     }

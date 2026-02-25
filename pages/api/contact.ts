@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { sendEmail } from "../../services/emailService";
+import { supabase } from "../../services/supabaseClient";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,8 +11,25 @@ export default async function handler(
     return res.status(405).end("Method Not Allowed");
   }
 
-  const { name, email, interest, message } = req.body;
+  const { name, email, phone, interest, message, userId } = req.body;
   console.log("Contact form submission:", req.body);
+
+  // Save to Database
+  const { error: dbError } = await supabase
+    .from('inquiries')
+    .insert([{
+      name,
+      email,
+      phone,
+      interest,
+      message,
+      user_id: userId || null
+    }]);
+
+  if (dbError) {
+    console.error("Database Error:", dbError);
+    // Continue even if DB fails, as email is primary
+  }
 
   const emailResult = await sendEmail({
     to: "stunningrealty@gmail.com",

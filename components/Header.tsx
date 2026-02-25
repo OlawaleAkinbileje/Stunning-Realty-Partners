@@ -63,6 +63,11 @@ const Header: React.FC = () => {
                   </div>
                   <span>{currentUser.name}</span>
                 </Link>
+                {currentUser.role === 'admin' && (
+                  <Link href="/admin" className="text-[10px] uppercase tracking-widest font-black text-blue-600 hover:text-blue-800 transition-colors">
+                    Admin Panel
+                  </Link>
+                )}
                 <button onClick={logout} className="text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:text-red-600 transition-colors">
                   Logout
                 </button>
