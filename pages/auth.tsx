@@ -100,8 +100,12 @@ const Auth: React.FC = () => {
             })
           });
 
+          const notifyData = await notifyRes.json();
           if (!notifyRes.ok) {
-            console.warn('Admin notification API returned an error');
+            console.error('Admin notification API error:', notifyData.error);
+            // Optionally show this error to the user if it's critical
+          } else {
+            console.log('Admin notification API success:', notifyData.message);
           }
 
           // Show success message instead of redirecting immediately

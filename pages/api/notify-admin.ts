@@ -15,6 +15,8 @@ export default async function handler(
   const baseUrl = `${protocol}://${host}`;
 
   if (type === "NEW_REGISTRATION") {
+    console.log("API: Attempting NEW_REGISTRATION notification...");
+
     // 1. Notify Admin
     const adminResult = await sendEmail({
       to: "stunningrealty@gmail.com",
@@ -54,11 +56,21 @@ export default async function handler(
 
     if (!adminResult.success) {
       console.error("Admin notification failed:", adminResult.error);
+      return res
+        .status(500)
+        .json({
+          success: false,
+          error: `Admin Email Error: ${adminResult.error}`,
+          phase: "admin_notify",
+        });
     }
 
     if (!userResult.success) {
       console.error("User welcome email failed:", userResult.error);
+      // We don't necessarily want to fail the whole request if the user email fails but admin succeeds
     }
+
+    return res.status(200).json({ success: true, message: "Emails processed" });
   }
 
   return res.status(200).json({ success: true });
