@@ -30,10 +30,24 @@ export const sendEmail = async ({
   text: string;
   html?: string;
 }) => {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+
+  console.log("Email Service Check:", {
+    hasUser: !!user,
+    userLength: user?.length || 0,
+    hasPass: !!pass,
+    passLength: pass?.length || 0,
+    env: process.env.NODE_ENV,
+  });
+
   const transporter = createTransporter();
 
   if (!transporter) {
-    return { success: false, error: "Email service not configured correctly" };
+    return {
+      success: false,
+      error: "Email service not configured. Missing EMAIL_USER or EMAIL_PASS.",
+    };
   }
 
   const mailOptions = {
