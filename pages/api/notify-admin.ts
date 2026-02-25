@@ -55,6 +55,10 @@ export default async function handler(
     if (!adminResult.success) {
       console.error("Admin notification failed:", adminResult.error);
     }
+
+    if (!userResult.success) {
+      console.error("User welcome email failed:", userResult.error);
+    }
   }
 
   return res.status(200).json({ success: true });
