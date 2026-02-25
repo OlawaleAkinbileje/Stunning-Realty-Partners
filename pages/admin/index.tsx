@@ -78,24 +78,50 @@ const AdminPanel: React.FC = () => {
 
     const { PROPERTIES } = await import('../../constants');
 
+    // Prepare properties for Supabase, mapping CamelCase to snake_case
+    const propertiesToSync = PROPERTIES.map((p) => ({
+      title: p.title,
+      price: p.price,
+      location: p.location,
+      beds: p.beds || 0,
+      baths: p.baths || 0,
+      sqft: p.sqft || 0,
+      sqmPrice: p.sqmPrice || 0,
+      // Store paths without leading slash for consistency
+      image: p.image?.startsWith('/') ? p.image.substring(1) : p.image,
+      images: (p.images || []).map(img => img.startsWith('/') ? img.substring(1) : img),
+      description: p.description,
+      type: p.type,
+      status: p.status,
+      featured: p.featured || false,
+      title_type: p.titleType || '',
+      landmarks: p.landmarks || [],
+      amenities: p.amenities || [],
+      units: p.units || [],
+      payment_plans: p.paymentPlans || [],
+      investment_insights: p.investmentInsights || {}
+    }));
+
     const { error } = await supabase
       .from('properties')
-      .upsert(PROPERTIES.map((p) => ({
-        ...p,
-        images: p.images || [],
-        landmarks: p.landmarks || [],
-        amenities: p.amenities || [],
-        units: p.units || [],
-        payment_plans: p.paymentPlans || [],
-        investment_insights: p.investmentInsights || {}
-      })), { onConflict: 'title' });
+      .upsert(propertiesToSync, { onConflict: 'title' });
 
     if (error) {
+      console.error('Sync Error:', error);
       alert('Sync Error: ' + error.message);
     } else {
       alert('Properties synced successfully!');
       fetchData();
     }
+  };
+
+  const getImagePath = (path: string) => {
+    if (!path || typeof path !== 'string' || path.trim() === '') {
+      return '/assets/Available-properties/Bolton/2.jpeg'; // Fallback
+    }
+    const trimmedPath = path.trim();
+    if (trimmedPath.startsWith('http')) return trimmedPath;
+    return trimmedPath.startsWith('/') ? trimmedPath : `/${trimmedPath}`;
   };
 
   return (
@@ -156,14 +182,13 @@ const AdminPanel: React.FC = () => {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 relative bg-slate-100 flex-shrink-0">
-                          {property.image && (
-                            <Image
-                              src={property.image.startsWith('http') ? property.image : `/${property.image}`}
-                              alt={property.title}
-                              fill
-                              className="object-cover"
-                            />
-                          )}
+                          <Image
+                            src={getImagePath(property.image)}
+                            alt={property.title}
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                          />
                         </div>
                         <div>
                           <p className="font-bold text-slate-900">{property.title}</p>

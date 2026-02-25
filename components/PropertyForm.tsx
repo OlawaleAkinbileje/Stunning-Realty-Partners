@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Property, PropertyUnit, PaymentPlan } from '../types';
-import Icon from './Icon';
+import React, { useState } from 'react';
+import { Property } from '../types';
 
 interface PropertyFormProps {
   initialData?: Partial<Property>;

@@ -32,7 +32,9 @@ const Header: React.FC = () => {
                 alt="SRP Logo"
                 width={120}
                 height={32}
-                className="h-8 w-auto"
+                sizes="120px"
+                style={{ height: '32px', width: 'auto' }}
+                className="object-contain"
               />
               <span className="hidden sm:inline-block h-4 w-px bg-slate-300 mx-2"></span>
               <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest leading-none text-slate-500">

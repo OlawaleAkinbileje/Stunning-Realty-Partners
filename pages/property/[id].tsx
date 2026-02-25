@@ -43,6 +43,17 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
     }
   }, [id, fetchProperty]);
 
+  const getImagePath = (path: string) => {
+    if (!path || typeof path !== 'string' || path.trim() === '') {
+      return '/assets/Available-properties/Bolton/2.jpeg'; // Fallback
+    }
+    const trimmedPath = path.trim();
+    if (trimmedPath.startsWith('http')) return trimmedPath;
+    // Remove any accidental leading slashes before adding the correct one
+    const cleanPath = trimmedPath.startsWith('/') ? trimmedPath.substring(1) : trimmedPath;
+    return `/${cleanPath}`;
+  };
+
   if (isLoading) return <div className="pt-40 text-center">Loading Asset...</div>;
   if (!property) return <div className="pt-40 text-center">Asset Not Found</div>;
 
@@ -99,9 +110,11 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 relative h-[500px] overflow-hidden">
             <Image
-              src={`/${property.images[activeImage]}`}
+              src={getImagePath(property.images[activeImage])}
               alt={property.title}
               fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 66vw"
               className="object-cover"
             />
             <button
@@ -119,9 +132,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
                 onClick={() => setActiveImage(idx)}
               >
                 <Image
-                  src={`/${img}`}
+                  src={getImagePath(img)}
                   alt="Thumb"
                   fill
+                  sizes="128px"
                   className="object-cover"
                 />
               </div>

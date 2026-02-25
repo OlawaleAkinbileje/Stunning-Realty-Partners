@@ -14,14 +14,26 @@ interface PropertyCardProps {
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, onFavorite, currentUser }) => {
   const isFavorite = currentUser?.favorites.includes(property.id);
 
+  const getImagePath = (path: string) => {
+    if (!path || typeof path !== 'string' || path.trim() === '') {
+      return '/assets/Available-properties/Bolton/2.jpeg'; // Fallback
+    }
+    const trimmedPath = path.trim();
+    if (trimmedPath.startsWith('http')) return trimmedPath;
+    // Remove any accidental leading slashes before adding the correct one
+    const cleanPath = trimmedPath.startsWith('/') ? trimmedPath.substring(1) : trimmedPath;
+    return `/${cleanPath}`;
+  };
+
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
       <div className="relative h-64 overflow-hidden">
         <Link href={`/property/${property.id}`}>
           <Image
-            src={`/${property.image}`}
+            src={getImagePath(property.image)}
             alt={property.title}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
         </Link>
