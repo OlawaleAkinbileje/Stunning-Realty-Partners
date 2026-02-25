@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Property } from '../types';
+import { supabase } from '../services/supabaseClient';
+import Icon from './Icon';
 
 interface PropertyFormProps {
   initialData?: Partial<Property>;
   onSubmit: (data: Partial<Property>) => Promise<void>;
+  onCancel?: () => void;
   isSubmitting: boolean;
   title: string;
 }
 
-const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isSubmitting, title }) => {
+const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCancel, isSubmitting, title }) => {
   const [formData, setFormData] = useState<Partial<Property>>({
     title: '',
     price: 0,
@@ -38,8 +41,35 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isSu
   const handleListChange = (name: string, value: string) => {
     setFormData({
       ...formData,
-      [name]: value.split(',').map(s => s.trim())
+      [name]: value.split(',').map(s => s.trim()).filter(s => s !== '')
     });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `property-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('properties')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('properties')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image: publicUrl });
+      alert('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Error uploading image. Make sure you have created a "properties" bucket in Supabase storage with public access.');
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,7 +78,16 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isSu
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-2xl p-10 md:p-16 border-t-8 border-black">
+    <div className="max-w-4xl mx-auto bg-white shadow-2xl p-10 md:p-16 border-t-8 border-black relative">
+      {onCancel && (
+        <button
+          onClick={onCancel}
+          className="absolute top-6 right-6 text-slate-400 hover:text-black transition-all p-2"
+          type="button"
+        >
+          <Icon name="times" className="text-xl" />
+        </button>
+      )}
       <h2 className="text-3xl font-bold text-slate-900 serif mb-10">{title}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -176,14 +215,31 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, isSu
         </div>
 
         <div>
-          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Main Image URL</label>
-          <input
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="e.g. assets/Available-properties/Bolton/2.jpeg"
-            className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold"
-          />
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Main Image</label>
+          <div className="flex flex-col md:flex-row gap-4 items-start">
+            <div className="flex-1 w-full">
+              <input
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="Enter image URL or path"
+                className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold"
+              />
+            </div>
+            <div className="w-full md:w-auto">
+              <label className="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-3 cursor-pointer transition-all border-2 border-dashed border-slate-300">
+                <Icon name="image" className="text-xl" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Upload File</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+          <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">Supports direct URLs or local paths (e.g. assets/Available-properties/Bolton/2.jpeg)</p>
         </div>
 
         <div>

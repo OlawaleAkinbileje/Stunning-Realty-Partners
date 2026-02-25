@@ -27,6 +27,7 @@ const NewProperty: React.FC = () => {
       <PropertyForm
         title="Add New Elite Asset"
         onSubmit={handleSubmit}
+        onCancel={() => router.push('/admin')}
         isSubmitting={isSubmitting}
       />
     </div>

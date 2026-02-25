@@ -60,6 +60,7 @@ const EditProperty: React.FC = () => {
         title={`Edit Asset: ${property.title}`}
         initialData={property}
         onSubmit={handleSubmit}
+        onCancel={() => router.push('/admin')}
         isSubmitting={isSubmitting}
       />
     </div>

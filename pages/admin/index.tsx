@@ -132,8 +132,8 @@ const AdminPanel: React.FC = () => {
       .upsert(propertiesToSync, { onConflict: 'title' });
 
     if (error) {
-      console.error('Sync Error:', error);
-      alert('Sync Error: ' + error.message);
+      console.error('Sync Error Details:', error);
+      alert('Sync Error: ' + error.message + '\n\nDetails: ' + (error.details || 'Check console for more info'));
     } else {
       alert('Properties synced successfully!');
       fetchData();
