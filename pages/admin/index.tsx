@@ -111,7 +111,7 @@ const AdminPanel: React.FC = () => {
       beds: p.beds || 0,
       baths: p.baths || 0,
       sqft: p.sqft || 0,
-      sqmPrice: p.sqmPrice || 0,
+      sqm_price: p.sqmPrice || 0,
       // Store paths without leading slash for consistency
       image: p.image?.startsWith('/') ? p.image.substring(1) : p.image,
       images: (p.images || []).map(img => img.startsWith('/') ? img.substring(1) : img),
