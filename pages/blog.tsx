@@ -1,10 +1,38 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BLOG_POSTS } from '../constants';
 import Image from 'next/image';
+import { supabase } from '../services/supabaseClient';
+import { useAuth } from '../context/AuthContext';
+
+interface BlogRow {
+    id: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    image: string;
+    date: string;
+    category: string;
+}
 
 const Blog: React.FC = () => {
+    const { currentUser } = useAuth();
+    const [posts, setPosts] = useState<BlogRow[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('blog_posts')
+                .select('*')
+                .order('created_at', { ascending: false });
+            if (!error && data) setPosts(data as BlogRow[]);
+            setLoading(false);
+        };
+        fetchPosts();
+    }, []);
+
     return (
         <div className="pt-20 min-h-screen bg-slate-50">
             <section className="bg-black py-24 text-center text-white">
@@ -15,8 +43,15 @@ const Blog: React.FC = () => {
             </section>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                {currentUser?.status === 'active' && (
+                    <div className="mb-8 text-right">
+                        <Link href="/admin/blog" className="text-[10px] font-black uppercase tracking-widest border-b-2 border-white bg-black text-white px-4 py-2 hover:bg-slate-800 transition-all">
+                            Manage Posts
+                        </Link>
+                    </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                    {BLOG_POSTS.map(post => (
+                    {(!loading ? posts : []).map(post => (
                         <article key={post.id} className="bg-white group overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all">
                             <Link href={`/blog/${post.id}`}>
                                 <div className="h-64 overflow-hidden relative">
@@ -46,6 +81,9 @@ const Blog: React.FC = () => {
                             </div>
                         </article>
                     ))}
+                    {(!loading && posts.length === 0) && (
+                        <div className="col-span-full text-center text-slate-500">No posts yet.</div>
+                    )}
                 </div>
             </div>
         </div>

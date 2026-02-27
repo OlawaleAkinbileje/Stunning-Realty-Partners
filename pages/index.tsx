@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../components/Icon';
 import Link from 'next/link';
 import PropertyCard from '../components/PropertyCard';
-import { BLOG_POSTS } from '../constants';
 import Image from 'next/image';
 import { supabase } from '../services/supabaseClient';
 import { Property, PaymentPlan, PropertyUnit } from '../types';
@@ -13,9 +12,11 @@ const Home: React.FC = () => {
   const featuredProperties = properties.filter(p => p.featured);
   const [searchCity, setSearchCity] = useState('');
   const [propertyType, setPropertyType] = useState('Property Type');
+  const [blogPosts, setBlogPosts] = useState<Array<{ id: string; title: string; excerpt: string; image: string; date: string; category: string; }>>([]);
 
   useEffect(() => {
     fetchProperties();
+    fetchBlog();
   }, []);
 
   const fetchProperties = async () => {
@@ -74,6 +75,15 @@ const Home: React.FC = () => {
     if (!error && data) {
       setProperties((data as DbProperty[]).map(normalize));
     }
+  };
+
+  const fetchBlog = async () => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('id,title,excerpt,image,date,category')
+      .order('created_at', { ascending: false })
+      .limit(2);
+    if (!error && data) setBlogPosts(data as Array<{ id: string; title: string; excerpt: string; image: string; date: string; category: string; }>);
   };
 
   return (
@@ -188,7 +198,7 @@ const Home: React.FC = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {BLOG_POSTS.slice(0, 2).map(post => (
+            {blogPosts.map(post => (
               <Link key={post.id} href={`/blog/${post.id}`} className="group bg-white flex flex-col md:flex-row overflow-hidden shadow-sm hover:shadow-xl transition-all">
                 <div className="md:w-2/5 h-64 md:h-auto overflow-hidden relative">
                   <Image

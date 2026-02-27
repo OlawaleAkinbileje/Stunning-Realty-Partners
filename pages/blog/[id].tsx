@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Icon from '../../components/Icon';
-import { BLOG_POSTS } from '../../constants';
 import Image from 'next/image';
+import { supabase } from '../../services/supabaseClient';
 
 const BlogPostPage: React.FC = () => {
     const router = useRouter();
     const { id } = router.query as { id: string };
-    const post = BLOG_POSTS.find(p => p.id === id);
+    type BlogRow = {
+        id: string;
+        title: string;
+        excerpt: string;
+        content: string;
+        image: string;
+        date: string;
+        category: string;
+    };
+    const [post, setPost] = useState<BlogRow | null>(null);
 
-    if (!post) {
-        return <div className="pt-40 text-center">Post Not Found</div>;
-    }
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (!id) return;
+            const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
+            if (!error && data) setPost(data);
+        };
+        fetchPost();
+    }, [id]);
+
+    if (!post) return <div className="pt-40 text-center">Loading Post...</div>;
 
     return (
         <div className="pt-20 bg-white">

@@ -3,18 +3,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Icon from '../../components/Icon';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { User, Property } from '../../types';
+import { Property } from '../../types';
 import Image from 'next/image';
 import { supabase } from '../../services/supabaseClient';
+import { useAuth } from '../../context/AuthContext';
 
-interface PropertyDetailsProps {
-  toggleFavorite: (id: string) => void;
-  currentUser: User | null;
-}
-
-const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, currentUser }) => {
+const PropertyDetails: React.FC = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
+  const { currentUser, toggleFavorite } = useAuth();
   const [property, setProperty] = useState<Property | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [inquirySent, setInquirySent] = useState(false);
@@ -81,7 +78,15 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
   if (isLoading) return <div className="pt-40 text-center">Loading Asset...</div>;
   if (!property) return <div className="pt-40 text-center">Asset Not Found</div>;
 
-  const isFavorite = currentUser?.favorites.includes(property.id);
+  const isFavorite = !!currentUser?.favorites?.includes(property.id);
+
+  const onToggleFavorite = () => {
+    if (!currentUser) {
+      router.push('/auth');
+      return;
+    }
+    toggleFavorite(property.id);
+  };
 
   const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,8 +165,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
               );
             })()}
             <button
-              onClick={() => toggleFavorite(property.id)}
-              className={`absolute top-8 right-8 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
+              onClick={onToggleFavorite}
+              title={currentUser ? (isFavorite ? 'Remove from favorites' : 'Add to favorites') : 'Sign in to save favorites'}
+              aria-label="Toggle Favorite"
+              className={`absolute top-8 right-8 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'} ${!currentUser ? 'opacity-70' : ''}`}
             >
               <Icon name="heart" variant={isFavorite ? 'solid' : 'regular'} className="text-xl" />
             </button>

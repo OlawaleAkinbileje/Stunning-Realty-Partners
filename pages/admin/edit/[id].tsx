@@ -85,6 +85,26 @@ const EditProperty: React.FC = () => {
       .eq('id', id);
 
     if (!error) {
+      try {
+        const { data: favUsers, error: favErr } = await supabase
+          .from('profiles')
+          .select('email,name,favorites')
+          .contains('favorites', [id]);
+
+        if (!favErr && favUsers && favUsers.length > 0) {
+          await fetch('/api/notify-favorites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              propertyId: id,
+              propertyTitle: formData.title,
+              recipients: favUsers.map(u => ({ email: u.email, name: u.name }))
+            })
+          });
+        }
+      } catch {
+        // best-effort notification
+      }
       router.push('/admin');
     } else {
       alert('Error updating property: ' + error.message);
