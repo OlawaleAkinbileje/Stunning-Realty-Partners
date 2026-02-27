@@ -161,7 +161,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
             })()}
             <button
               onClick={() => toggleFavorite(property.id)}
-              className={`absolute top-8 right-8 w-14 h-14 rounded-none flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
+              className={`absolute top-8 right-8 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
             >
               <Icon name="heart" variant={isFavorite ? 'solid' : 'regular'} className="text-xl" />
             </button>
