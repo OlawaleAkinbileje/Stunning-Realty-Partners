@@ -1,8 +1,24 @@
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+let supabaseHostname = "";
+try {
+  if (supabaseUrl) {
+    supabaseHostname = new URL(supabaseUrl).hostname;
+  }
+} catch {}
+
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ["images.unsplash.com"],
+    remotePatterns: supabaseHostname
+      ? [
+          {
+            protocol: "https",
+            hostname: supabaseHostname,
+            pathname: "/storage/v1/object/public/**",
+          },
+        ]
+      : [],
   },
-  // Skip linting and type checking during builds for faster compilation
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -109,14 +109,32 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 relative h-[500px] overflow-hidden">
-            <Image
-              src={getImagePath(property.images[activeImage])}
-              alt={property.title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 66vw"
-              className="object-cover"
-            />
+            {(() => {
+              const url = getImagePath(property.images[activeImage]);
+              const isVideo = /\.(mp4|webm)(\?|$)/i.test(url);
+              if (isVideo) {
+                return (
+                  <video
+                    src={url}
+                    className="w-full h-full object-cover"
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                  />
+                );
+              }
+              return (
+                <Image
+                  src={url}
+                  alt={property.title}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover"
+                />
+              );
+            })()}
             <button
               onClick={() => toggleFavorite(property.id)}
               className={`absolute top-8 right-8 w-14 h-14 rounded-none flex items-center justify-center shadow-2xl transition-all ${isFavorite ? 'bg-red-600 text-white' : 'bg-white text-black'}`}
@@ -131,13 +149,22 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
                 className={`relative w-32 lg:w-full h-32 cursor-pointer border-2 ${activeImage === idx ? 'border-black' : 'border-transparent'}`}
                 onClick={() => setActiveImage(idx)}
               >
-                <Image
-                  src={getImagePath(img)}
-                  alt="Thumb"
-                  fill
-                  sizes="128px"
-                  className="object-cover"
-                />
+                {/\.(mp4|webm)(\?|$)/i.test(getImagePath(img)) ? (
+                  <video
+                    src={getImagePath(img)}
+                    className="w-full h-full object-cover"
+                    muted
+                    loop
+                  />
+                ) : (
+                  <Image
+                    src={getImagePath(img)}
+                    alt="Thumb"
+                    fill
+                    sizes="128px"
+                    className="object-cover"
+                  />
+                )}
               </div>
             ))}
           </div>

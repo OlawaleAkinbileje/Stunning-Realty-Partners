@@ -48,10 +48,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      alert('Main image must be JPEG or PNG.');
+      return;
+    }
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const ext = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const filePath = `property-images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -69,6 +73,39 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Error uploading image. Make sure you have created a "properties" bucket in Supabase storage with public access.');
+    }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const allowed = ['image/jpeg', 'image/png', 'video/mp4', 'video/webm'];
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (const file of Array.from(files)) {
+        if (!allowed.includes(file.type)) {
+          continue;
+        }
+        const ext = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const filePath = `property-media/${fileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from('properties')
+          .upload(filePath, file);
+        if (uploadError) throw uploadError;
+        const { data: { publicUrl } } = supabase.storage
+          .from('properties')
+          .getPublicUrl(filePath);
+        uploadedUrls.push(publicUrl);
+      }
+      const existing = Array.isArray(formData.images) ? formData.images : [];
+      setFormData({ ...formData, images: [...existing, ...uploadedUrls] });
+      alert('Gallery files uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading gallery:', error);
+      alert('Error uploading gallery files. Ensure the "properties" bucket allows uploads.');
     }
   };
 
@@ -232,14 +269,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
                 <span className="text-[10px] font-black uppercase tracking-widest">Upload File</span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png"
                   onChange={handleImageUpload}
                   className="hidden"
                 />
               </label>
             </div>
           </div>
-          <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">Supports direct URLs or local paths (e.g. assets/Available-properties/Bolton/2.jpeg)</p>
+          <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">JPEG or PNG only, or paste an image URL.</p>
         </div>
 
         <div>
@@ -251,6 +288,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
             placeholder="url1, url2, url3"
             className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold resize-none"
           ></textarea>
+          <div className="mt-4">
+            <label className="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-3 cursor-pointer transition-all border-2 border-dashed border-slate-300 w-full md:w-auto">
+              <Icon name="images" className="text-xl" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Upload Gallery</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,video/mp4,video/webm"
+                multiple
+                onChange={handleGalleryUpload}
+                className="hidden"
+              />
+            </label>
+            <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">Add JPEG, PNG, or MP4/WEBM videos.</p>
+          </div>
         </div>
 
         <button

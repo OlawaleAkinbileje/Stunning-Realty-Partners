@@ -98,48 +98,6 @@ const AdminPanel: React.FC = () => {
     return <div className="pt-40 text-center">Loading SRP Admin...</div>;
   }
 
-  const syncProperties = async () => {
-    if (!confirm('This will upload all properties from constants.tsx to Supabase. Proceed?')) return;
-
-    const { PROPERTIES } = await import('../../constants');
-
-    // Prepare properties for Supabase, mapping CamelCase to snake_case
-    const propertiesToSync = PROPERTIES.map((p) => ({
-      title: p.title,
-      price: p.price,
-      location: p.location,
-      beds: p.beds || 0,
-      baths: p.baths || 0,
-      sqft: p.sqft || 0,
-      sqm_price: p.sqmPrice || 0,
-      // Store paths without leading slash for consistency
-      image: p.image?.startsWith('/') ? p.image.substring(1) : p.image,
-      images: (p.images || []).map(img => img.startsWith('/') ? img.substring(1) : img),
-      description: p.description,
-      type: p.type,
-      status: p.status,
-      featured: p.featured || false,
-      title_type: p.titleType || '',
-      landmarks: p.landmarks || [],
-      amenities: p.amenities || [],
-      units: p.units || [],
-      payment_plans: p.paymentPlans || [],
-      investment_insights: p.investmentInsights || {}
-    }));
-
-    const { error } = await supabase
-      .from('properties')
-      .upsert(propertiesToSync, { onConflict: 'title' });
-
-    if (error) {
-      console.error('Sync Error Details:', error);
-      alert('Sync Error: ' + error.message + '\n\nDetails: ' + (error.details || 'Check console for more info'));
-    } else {
-      alert('Properties synced successfully!');
-      fetchData();
-    }
-  };
-
   const getImagePath = (path: string) => {
     if (!path || typeof path !== 'string' || path.trim() === '') {
       return '/assets/Available-properties/Bolton/2.jpeg'; // Fallback
@@ -173,12 +131,6 @@ const AdminPanel: React.FC = () => {
           <div className="flex gap-4">
             {activeView === 'properties' && (
               <>
-                <button
-                  onClick={syncProperties}
-                  className="bg-slate-200 text-slate-900 px-8 py-4 font-black text-xs uppercase tracking-widest hover:bg-slate-300 transition-all"
-                >
-                  Sync from Code
-                </button>
                 <Link
                   href="/admin/new"
                   className="bg-black text-white px-8 py-4 font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl"
