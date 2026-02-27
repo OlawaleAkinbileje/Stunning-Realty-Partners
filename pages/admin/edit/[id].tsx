@@ -18,7 +18,31 @@ const EditProperty: React.FC = () => {
       .single();
 
     if (!error && data) {
-      setProperty(data);
+      const camel: Property = {
+        id: data.id,
+        title: data.title,
+        price: data.price,
+        location: data.location,
+        beds: data.beds ?? 0,
+        baths: data.baths ?? 0,
+        sqft: data.sqft ?? 0,
+        sqmPrice: data.sqm_price ?? undefined,
+        image: data.image || '',
+        images: data.images || [],
+        description: data.description || '',
+        type: data.type,
+        status: data.status,
+        featured: data.featured ?? false,
+        createdAt: data.created_at,
+        created_at: data.created_at,
+        titleType: data.title_type || '',
+        landmarks: data.landmarks || [],
+        amenities: data.amenities || [],
+        units: data.units || [],
+        paymentPlans: data.payment_plans || [],
+        investmentInsights: data.investment_insights || {}
+      };
+      setProperty(camel);
     } else {
       alert('Error fetching property data');
       router.push('/admin');
@@ -33,11 +57,27 @@ const EditProperty: React.FC = () => {
 
   const handleSubmit = async (formData: Partial<Property>) => {
     setIsSubmitting(true);
-    // Remove id and createdAt from update data to avoid Supabase errors
-    const updateData = { ...formData };
-    delete updateData.id;
-    delete updateData.createdAt;
-    delete updateData.created_at;
+    const updateData = {
+      title: formData.title,
+      price: formData.price,
+      location: formData.location,
+      beds: formData.beds ?? 0,
+      baths: formData.baths ?? 0,
+      sqft: formData.sqft ?? 0,
+      sqm_price: formData.sqmPrice ?? null,
+      image: formData.image || null,
+      images: formData.images || [],
+      description: formData.description || '',
+      type: formData.type,
+      status: formData.status,
+      featured: formData.featured ?? false,
+      title_type: formData.titleType || null,
+      landmarks: formData.landmarks || [],
+      amenities: formData.amenities || [],
+      units: formData.units || [],
+      payment_plans: formData.paymentPlans || [],
+      investment_insights: formData.investmentInsights || {}
+    };
 
     const { error } = await supabase
       .from('properties')

@@ -6,7 +6,7 @@ import PropertyCard from '../components/PropertyCard';
 import { BLOG_POSTS } from '../constants';
 import Image from 'next/image';
 import { supabase } from '../services/supabaseClient';
-import { Property } from '../types';
+import { Property, PaymentPlan, PropertyUnit } from '../types';
 
 const Home: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -19,13 +19,60 @@ const Home: React.FC = () => {
   }, []);
 
   const fetchProperties = async () => {
+    type DbProperty = {
+      id: string;
+      title: string;
+      price: number;
+      location: string;
+      beds?: number;
+      baths?: number;
+      sqft?: number;
+      sqm_price?: number;
+      image?: string;
+      images?: string[];
+      description?: string;
+      type: Property['type'];
+      status: Property['status'];
+      featured?: boolean;
+      created_at?: string;
+      title_type?: string;
+      landmarks?: string[];
+      amenities?: string[];
+      units?: PropertyUnit[];
+      payment_plans?: PaymentPlan[];
+      investment_insights?: Record<string, string>;
+    };
+    const normalize = (d: DbProperty): Property => ({
+      id: d.id,
+      title: d.title,
+      price: d.price,
+      location: d.location,
+      beds: d.beds ?? 0,
+      baths: d.baths ?? 0,
+      sqft: d.sqft ?? 0,
+      sqmPrice: d.sqm_price ?? undefined,
+      image: d.image || '',
+      images: d.images || [],
+      description: d.description || '',
+      type: d.type,
+      status: d.status,
+      featured: d.featured ?? false,
+      createdAt: d.created_at,
+      created_at: d.created_at,
+      titleType: d.title_type || '',
+      landmarks: d.landmarks || [],
+      amenities: d.amenities || [],
+      units: d.units || [],
+      paymentPlans: d.payment_plans || [],
+      investmentInsights: d.investment_insights || {}
+    });
     const { data, error } = await supabase
       .from('properties')
       .select('*')
       .limit(6);
 
     if (!error && data) {
-      setProperties(data);
+      setProperties((data as DbProperty[]).map(normalize));
     }
   };
 

@@ -32,7 +32,31 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ toggleFavorite, curre
       .single();
 
     if (!error && data) {
-      setProperty(data);
+      const p: Property = {
+        id: data.id,
+        title: data.title,
+        price: data.price,
+        location: data.location,
+        beds: data.beds ?? 0,
+        baths: data.baths ?? 0,
+        sqft: data.sqft ?? 0,
+        sqmPrice: data.sqm_price ?? undefined,
+        image: data.image || '',
+        images: data.images || [],
+        description: data.description || '',
+        type: data.type,
+        status: data.status,
+        featured: data.featured ?? false,
+        createdAt: data.created_at,
+        created_at: data.created_at,
+        titleType: data.title_type || '',
+        landmarks: data.landmarks || [],
+        amenities: data.amenities || [],
+        units: data.units || [],
+        paymentPlans: data.payment_plans || [],
+        investmentInsights: data.investment_insights || {}
+      };
+      setProperty(p);
     }
     setIsLoading(false);
   }, [id]);

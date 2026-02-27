@@ -25,7 +25,12 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
     featured: false,
     image: '',
     images: [],
+    amenities: [],
     landmarks: [],
+    units: [],
+    paymentPlans: [],
+    sqmPrice: undefined,
+    investmentInsights: {},
     ...initialData
   });
 
@@ -239,6 +244,20 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
           </div>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">SQM Price (₦)</label>
+            <input
+              type="number"
+              name="sqmPrice"
+              value={formData.sqmPrice ?? ''}
+              onChange={handleChange}
+              placeholder="e.g. 1500000"
+              className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold"
+            />
+          </div>
+        </div>
+
         <div>
           <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Description</label>
           <textarea
@@ -301,6 +320,224 @@ const PropertyForm: React.FC<PropertyFormProps> = ({ initialData, onSubmit, onCa
               />
             </label>
             <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-widest">Add JPEG, PNG, or MP4/WEBM videos.</p>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Amenities (Comma separated)</label>
+          <textarea
+            rows={2}
+            value={(formData.amenities || []).join(', ')}
+            onChange={(e) => handleListChange('amenities', e.target.value)}
+            placeholder="Gym, Pool, Power Backup"
+            className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold resize-none"
+          ></textarea>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Landmarks (Comma separated)</label>
+          <textarea
+            rows={2}
+            value={(formData.landmarks || []).join(', ')}
+            onChange={(e) => handleListChange('landmarks', e.target.value)}
+            placeholder="Landmark A, Landmark B"
+            className="w-full bg-slate-50 border-b-2 border-slate-200 py-3 outline-none focus:border-black transition-all font-bold resize-none"
+          ></textarea>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Units</label>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, units: [...(formData.units || []), { type: '', price: 0, description: '' }] })}
+              className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-100 hover:bg-slate-200"
+            >
+              Add Unit
+            </button>
+          </div>
+          <div className="space-y-4">
+            {(formData.units || []).map((unit, idx) => (
+              <div key={idx} className="border border-slate-200 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input
+                    placeholder="Type (e.g. 2BR Apartment)"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={unit.type}
+                    onChange={(e) => {
+                      const units = [...(formData.units || [])];
+                      units[idx] = { ...units[idx], type: e.target.value };
+                      setFormData({ ...formData, units });
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={unit.price}
+                    onChange={(e) => {
+                      const units = [...(formData.units || [])];
+                      units[idx] = { ...units[idx], price: Number(e.target.value) };
+                      setFormData({ ...formData, units });
+                    }}
+                  />
+                  <input
+                    placeholder="Description (optional)"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={unit.description || ''}
+                    onChange={(e) => {
+                      const units = [...(formData.units || [])];
+                      units[idx] = { ...units[idx], description: e.target.value };
+                      setFormData({ ...formData, units });
+                    }}
+                  />
+                </div>
+                <div className="mt-3 text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const units = [...(formData.units || [])];
+                      units.splice(idx, 1);
+                      setFormData({ ...formData, units });
+                    }}
+                    className="text-[10px] font-black uppercase tracking-widest text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Payment Plans</label>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, paymentPlans: [...(formData.paymentPlans || []), { name: '', price: 0, deposit: undefined }] })}
+              className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-100 hover:bg-slate-200"
+            >
+              Add Plan
+            </button>
+          </div>
+          <div className="space-y-4">
+            {(formData.paymentPlans || []).map((plan, idx) => (
+              <div key={idx} className="border border-slate-200 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input
+                    placeholder="Plan Name"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={plan.name}
+                    onChange={(e) => {
+                      const paymentPlans = [...(formData.paymentPlans || [])];
+                      paymentPlans[idx] = { ...paymentPlans[idx], name: e.target.value };
+                      setFormData({ ...formData, paymentPlans });
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={plan.price}
+                    onChange={(e) => {
+                      const paymentPlans = [...(formData.paymentPlans || [])];
+                      paymentPlans[idx] = { ...paymentPlans[idx], price: Number(e.target.value) };
+                      setFormData({ ...formData, paymentPlans });
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Deposit (optional)"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={plan.deposit ?? ''}
+                    onChange={(e) => {
+                      const paymentPlans = [...(formData.paymentPlans || [])];
+                      const val = e.target.value === '' ? undefined : Number(e.target.value);
+                      paymentPlans[idx] = { ...paymentPlans[idx], deposit: val };
+                      setFormData({ ...formData, paymentPlans });
+                    }}
+                  />
+                </div>
+                <div className="mt-3 text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const paymentPlans = [...(formData.paymentPlans || [])];
+                      paymentPlans.splice(idx, 1);
+                      setFormData({ ...formData, paymentPlans });
+                    }}
+                    className="text-[10px] font-black uppercase tracking-widest text-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Investment Insights</label>
+            <button
+              type="button"
+              onClick={() => {
+                const ii = { ...(formData.investmentInsights || {}) } as Record<string, string>;
+                let i = 1;
+                while (ii[`note${i}`] !== undefined) i++;
+                ii[`note${i}`] = '';
+                setFormData({ ...formData, investmentInsights: ii });
+              }}
+              className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-slate-100 hover:bg-slate-200"
+            >
+              Add Field
+            </button>
+          </div>
+          <div className="space-y-4">
+            {Object.entries(formData.investmentInsights || {}).map(([key, val], idx) => (
+              <div key={idx} className="border border-slate-200 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <input
+                    placeholder="Key (e.g. shortLet)"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={key}
+                    onChange={(e) => {
+                      const oldKey = key;
+                      const newKey = e.target.value;
+                      const current = { ...(formData.investmentInsights || {}) } as Record<string, string>;
+                      const value = current[oldKey];
+                      delete current[oldKey];
+                      current[newKey] = value;
+                      setFormData({ ...formData, investmentInsights: current });
+                    }}
+                  />
+                  <input
+                    placeholder="Value (e.g. N250k per night)"
+                    className="bg-slate-50 border-b-2 border-slate-200 py-3 outline-none font-bold"
+                    value={val as string}
+                    onChange={(e) => {
+                      const current = { ...(formData.investmentInsights || {}) } as Record<string, string>;
+                      current[key] = e.target.value;
+                      setFormData({ ...formData, investmentInsights: current });
+                    }}
+                  />
+                  <div className="text-right">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = { ...(formData.investmentInsights || {}) } as Record<string, string>;
+                        delete current[key];
+                        setFormData({ ...formData, investmentInsights: current });
+                      }}
+                      className="text-[10px] font-black uppercase tracking-widest text-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
